@@ -1,0 +1,28 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npx create-expo-app@latest:*)",
+      "Read(//d//**)",
+      "Bash(cp -r ToxicTask-temp/* ToxicTask/)",
+      "Bash(cp -r ToxicTask-temp/.* ToxicTask/)",
+      "Bash(rm -rf ToxicTask-temp)",
+      "Bash(npm install:*)",
+      "Bash(npx tailwindcss:*)",
+      "Bash(npm start:*)",
+      "Bash(npx expo:*)",
+      "Bash(npx kill-port:*)",
+      "Bash(curl -s http://localhost:8081/status)",
+      "Bash(curl -s \"http://localhost:8081/index.bundle?platform=web&dev=true\")",
+      "Bash(timeout 60 curl -s \"http://localhost:8081/index.bundle?platform=web&dev=true&hot=false\")",
+      "Bash(npm run:*)",
+      "Bash(npm list:*)",
+      "Bash(curl -s http://localhost:8081)",
+      "Bash(curl -s \"http://localhost:8081/node_modules/expo-router/entry.bundle?platform=web&dev=true\")",
+      "Bash(npx serve:*)",
+      "Bash(curl -s http://localhost:3000)",
+      "Bash(timeout 2 bash -c 'while [ -d \"dist\" ]; do rm -rf dist 2>/dev/null && break || sleep 0.1; done')",
+      "Bash(taskkill //F //IM node.exe)",
+      "Bash(git add:*)"
+    ]
+  }
+}
