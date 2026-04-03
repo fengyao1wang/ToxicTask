@@ -1,7 +1,10 @@
-import { View, Text, StyleSheet, FlatList, ActivityIndicator } from 'react-native';
+import { View, Text, StyleSheet, FlatList, ActivityIndicator, TouchableOpacity } from 'react-native';
 import { useEffect, useState } from 'react';
 import { shameLogApi } from '@/lib/supabase';
 import { ShameLog } from '@/types';
+import { useFocusEffect } from '@react-navigation/native';
+import { useCallback } from 'react';
+import FontAwesome from '@expo/vector-icons/FontAwesome';
 
 export default function ShameWallScreen() {
   const [shameLogs, setShameLogs] = useState<ShameLog[]>([]);
@@ -11,9 +14,19 @@ export default function ShameWallScreen() {
     loadShameLogs();
   }, []);
 
+  // 页面获得焦点时自动刷新
+  useFocusEffect(
+    useCallback(() => {
+      console.log('[ShameWall][Info] 页面获得焦点，刷新数据');
+      loadShameLogs();
+    }, [])
+  );
+
   const loadShameLogs = async () => {
+    console.log('[ShameWall][Info] 开始加载耻辱记录');
     setLoading(true);
     const logs = await shameLogApi.getAllShameLogs();
+    console.log('[ShameWall][Info] 加载到', logs.length, '条记录');
     setShameLogs(logs);
     setLoading(false);
   };
@@ -41,8 +54,13 @@ export default function ShameWallScreen() {
   return (
     <View style={styles.container}>
       <View style={styles.header}>
-        <Text style={styles.title}>🔥 耻辱墙</Text>
-        <Text style={styles.subtitle}>失败者的公开处刑</Text>
+        <View>
+          <Text style={styles.title}>🔥 耻辱墙</Text>
+          <Text style={styles.subtitle}>失败者的公开处刑</Text>
+        </View>
+        <TouchableOpacity onPress={loadShameLogs} style={styles.refreshButton}>
+          <FontAwesome name="refresh" size={20} color="#666" />
+        </TouchableOpacity>
       </View>
 
       {shameLogs.length === 0 ? (
@@ -75,9 +93,15 @@ const styles = StyleSheet.create({
     backgroundColor: '#0a0a0a',
   },
   header: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
     padding: 20,
     borderBottomWidth: 1,
     borderBottomColor: '#2a2a2a',
+  },
+  refreshButton: {
+    padding: 10,
   },
   title: {
     fontSize: 28,

@@ -1,9 +1,12 @@
 import { create } from 'zustand';
 import { Profile, Task } from '@/types';
+import { User } from '@supabase/supabase-js';
 
 interface AppState {
+  user: User | null;
   profile: Profile | null;
   tasks: Task[];
+  setUser: (user: User | null) => void;
   setProfile: (profile: Profile | null) => void;
   setTasks: (tasks: Task[]) => void;
   addTask: (task: Task) => void;
@@ -12,8 +15,11 @@ interface AppState {
 }
 
 export const useAppStore = create<AppState>((set) => ({
+  user: null,
   profile: null,
   tasks: [],
+
+  setUser: (user) => set({ user }),
 
   setProfile: (profile) => set({ profile }),
 

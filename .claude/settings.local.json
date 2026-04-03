@@ -22,7 +22,10 @@
       "Bash(curl -s http://localhost:3000)",
       "Bash(timeout 2 bash -c 'while [ -d \"dist\" ]; do rm -rf dist 2>/dev/null && break || sleep 0.1; done')",
       "Bash(taskkill //F //IM node.exe)",
-      "Bash(git add:*)"
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Bash(git push:*)",
+      "Bash(git remote:*)"
     ]
   }
 }

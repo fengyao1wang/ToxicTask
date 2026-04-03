@@ -7,6 +7,9 @@ import { useEffect } from 'react';
 import 'react-native-reanimated';
 
 import { useColorScheme } from '@/components/useColorScheme';
+import { supabase } from '@/lib/supabase';
+import { useAppStore } from '@/lib/stores/appStore';
+import { profileApi } from '@/lib/supabase';
 
 export {
   // Catch any errors thrown by the Layout component.
@@ -42,6 +45,34 @@ export default function RootLayout() {
 
 function RootLayoutNav() {
   const colorScheme = useColorScheme();
+  const { setUser, setProfile } = useAppStore();
+
+  useEffect(() => {
+    // 检查当前会话
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      if (session?.user) {
+        setUser(session.user);
+        profileApi.getCurrentProfile().then((profile) => {
+          if (profile) setProfile(profile);
+        });
+      }
+    });
+
+    // 监听认证状态变化
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      if (session?.user) {
+        setUser(session.user);
+        profileApi.getCurrentProfile().then((profile) => {
+          if (profile) setProfile(profile);
+        });
+      } else {
+        setUser(null);
+        setProfile(null);
+      }
+    });
+
+    return () => subscription.unsubscribe();
+  }, []);
 
   return (
     <ThemeProvider value={DarkTheme}>
