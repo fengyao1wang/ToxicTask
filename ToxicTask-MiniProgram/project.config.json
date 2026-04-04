@@ -2,7 +2,7 @@
   "miniprogramRoot": "./dist",
   "projectname": "ToxicTask-MiniProgram",
   "description": "ToxicTask 毒舌待办小程序",
-  "appid": "touristappid",
+  "appid": "wx105b7b22f5b871fc",
   "setting": {
     "urlCheck": false,
     "es6": false,
