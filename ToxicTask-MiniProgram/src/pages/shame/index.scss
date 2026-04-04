@@ -1,0 +1,104 @@
+.shame-container {
+  min-height: 100vh;
+  background-color: #0a0a0a;
+  padding: 20px;
+}
+
+.header {
+  margin-bottom: 30px;
+}
+
+.header-title {
+  font-size: 28px;
+  font-weight: bold;
+  color: #ff3b30;
+  display: block;
+  margin-bottom: 8px;
+}
+
+.header-subtitle {
+  font-size: 14px;
+  color: #666;
+  display: block;
+}
+
+.loading-text {
+  text-align: center;
+  color: #666;
+  font-size: 14px;
+  display: block;
+  margin-top: 40px;
+}
+
+.empty-state {
+  text-align: center;
+  margin-top: 60px;
+}
+
+.empty-text {
+  font-size: 18px;
+  color: #666;
+  display: block;
+  margin-bottom: 10px;
+}
+
+.empty-hint {
+  font-size: 14px;
+  color: #444;
+  display: block;
+}
+
+.shame-card {
+  background-color: #1a1a1a;
+  border: 1px solid #333;
+  border-left: 4px solid #ff3b30;
+  border-radius: 12px;
+  padding: 16px;
+  margin-bottom: 12px;
+}
+
+.shame-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.shame-task-title {
+  font-size: 16px;
+  font-weight: bold;
+  color: #fff;
+  flex: 1;
+}
+
+.shame-date {
+  font-size: 12px;
+  color: #666;
+}
+
+.shame-comment {
+  background-color: #0a0a0a;
+  border-radius: 8px;
+  padding: 12px;
+  margin-bottom: 12px;
+  display: flex;
+  align-items: flex-start;
+}
+
+.comment-icon {
+  font-size: 20px;
+  margin-right: 8px;
+}
+
+.comment-text {
+  flex: 1;
+  font-size: 14px;
+  color: #ff3b30;
+  line-height: 1.5;
+}
+
+.shame-bet {
+  font-size: 12px;
+  color: #666;
+  display: block;
+}
