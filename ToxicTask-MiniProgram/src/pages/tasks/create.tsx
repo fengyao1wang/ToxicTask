@@ -16,6 +16,7 @@ export default function CreateTask() {
   const [loading, setLoading] = useState(false);
   const [taskType, setTaskType] = useState<'single' | 'repeat'>('single');
   const [repeatDays, setRepeatDays] = useState(7);
+  const [customDaysInput, setCustomDaysInput] = useState('7');
 
   const betOptions = [5, 10, 20, 30, 50];
 
@@ -270,7 +271,10 @@ export default function CreateTask() {
               <View
                 key={days}
                 className={`repeat-option ${repeatDays === days ? 'active' : ''}`}
-                onClick={() => setRepeatDays(days)}
+                onClick={() => {
+                  setRepeatDays(days);
+                  setCustomDaysInput(days.toString());
+                }}
               >
                 <Text className='repeat-text'>{days}天</Text>
               </View>
@@ -282,10 +286,22 @@ export default function CreateTask() {
               className='days-input'
               type='number'
               placeholder='输入天数'
-              value={repeatDays.toString()}
+              value={customDaysInput}
               onInput={(e) => {
-                const value = parseInt(e.detail.value) || 1;
-                setRepeatDays(Math.max(1, Math.min(365, value)));
+                const value = e.detail.value;
+                setCustomDaysInput(value);
+                if (value === '') {
+                  setRepeatDays(1);
+                } else {
+                  const numValue = parseInt(value) || 1;
+                  setRepeatDays(Math.max(1, Math.min(365, numValue)));
+                }
+              }}
+              onBlur={() => {
+                if (customDaysInput === '') {
+                  setCustomDaysInput('1');
+                  setRepeatDays(1);
+                }
               }}
             />
             <Text className='input-unit'>天</Text>

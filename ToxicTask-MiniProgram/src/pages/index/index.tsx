@@ -156,63 +156,73 @@ export default function Index() {
     Taro.navigateTo({ url: '/pages/tasks/create' });
   };
 
-  const handleCompleteTask = async (taskId: string, betAmount: number) => {
+  const handleCompleteTask = async (taskId: string, betAmount: number, skipConfirm = false) => {
     if (!user || !profile) return;
 
-    Taro.showModal({
-      title: '完成任务',
-      content: '确认已完成此任务？将返还押金。',
-      success: async (res) => {
-        if (res.confirm) {
-          try {
-            // 更新任务状态为已完成
-            await updateTaskStatus(taskId, 'completed');
+    const completeTask = async () => {
+      try {
+        // 更新任务状态为已完成
+        await updateTaskStatus(taskId, 'completed');
 
-            // 返还押金
-            const newCoins = (profile.dignity_coins || 0) + betAmount;
-            updateDignityCoins(user.id, newCoins);
+        // 返还押金
+        const newCoins = (profile.dignity_coins || 0) + betAmount;
+        updateDignityCoins(user.id, newCoins);
 
-            // 创建交易记录
-            const transaction = {
-              id: `trans_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
-              user_id: user.id,
-              type: 'task_refund',
-              amount: betAmount,
-              balance_after: newCoins,
-              source_id: taskId,
-              description: '任务完成退款',
-              created_at: new Date().toISOString(),
-            };
+        // 创建交易记录
+        const transaction = {
+          id: `trans_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+          user_id: user.id,
+          type: 'task_refund',
+          amount: betAmount,
+          balance_after: newCoins,
+          source_id: taskId,
+          description: '任务完成退款',
+          created_at: new Date().toISOString(),
+        };
 
-            const allTransactions = Taro.getStorageSync('toxictask_transactions') || {};
-            const userTransactions = allTransactions[user.id] || [];
-            userTransactions.unshift(transaction);
-            allTransactions[user.id] = userTransactions;
-            Taro.setStorageSync('toxictask_transactions', allTransactions);
+        const allTransactions = Taro.getStorageSync('toxictask_transactions') || {};
+        const userTransactions = allTransactions[user.id] || [];
+        userTransactions.unshift(transaction);
+        allTransactions[user.id] = userTransactions;
+        Taro.setStorageSync('toxictask_transactions', allTransactions);
 
-            Taro.showToast({
-              title: `任务完成！+${betAmount} 币`,
-              icon: 'success',
-            });
+        Taro.showToast({
+          title: `任务完成！+${betAmount} 币`,
+          icon: 'success',
+        });
 
-            // 刷新任务列表
-            await fetchTasks(user.id);
+        // 刷新任务列表
+        await fetchTasks(user.id);
 
-            // 检查并解锁成就
-            await checkAndUnlockAchievements(user.id);
+        // 检查并解锁成就
+        await checkAndUnlockAchievements(user.id);
 
-            // 重新加载 profile 以更新余额显示
-            initProfile(user.id);
-          } catch (error) {
-            console.error('[Index] 完成任务失败:', error);
-            Taro.showToast({
-              title: '操作失败',
-              icon: 'none',
-            });
+        // 重新加载 profile 以更新余额显示
+        initProfile(user.id);
+      } catch (error) {
+        console.error('[Index] 完成任务失败:', error);
+        Taro.showToast({
+          title: '操作失败',
+          icon: 'none',
+        });
+      }
+    };
+
+    if (skipConfirm) {
+      // 重复任务自动完成，不需要确认
+      await completeTask();
+    } else {
+      // 单次任务需要用户确认
+      Taro.showModal({
+        title: '完成任务',
+        content: '确认已完成此任务？将返还押金。',
+        success: async (res) => {
+          if (res.confirm) {
+            await completeTask();
           }
-        }
-      },
-    });
+        },
+      });
+    }
   };
 
   const handleCheckIn = async (taskId: string) => {
@@ -242,9 +252,9 @@ export default function Index() {
       if (task && task.check_ins) {
         const allChecked = task.check_ins.every((checkIn) => checkIn.checked);
         if (allChecked) {
-          // 所有打卡完成，任务成功
+          // 所有打卡完成，任务自动完成（不需要确认）
           setTimeout(() => {
-            handleCompleteTask(taskId, task.bet_amount);
+            handleCompleteTask(taskId, task.bet_amount, true);
           }, 500);
         }
       }
