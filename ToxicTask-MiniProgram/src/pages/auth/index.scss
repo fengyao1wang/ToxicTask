@@ -5,6 +5,7 @@
   display: flex;
   flex-direction: column;
   align-items: center;
+  justify-content: center;
 }
 
 .auth-title {
@@ -27,68 +28,58 @@
   max-width: 400px;
 }
 
-.form-group {
+.wechat-login-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 40px;
+}
+
+.login-hint {
+  font-size: 14px;
+  color: #999;
   margin-bottom: 20px;
 }
 
-.form-label {
-  font-size: 14px;
-  color: #999;
-  margin-bottom: 8px;
-  display: block;
-}
-
-.form-input {
-  width: 100%;
-  height: 44px;
-  background-color: #1a1a1a;
-  border: 1px solid #333;
-  border-radius: 8px;
-  padding: 0 15px;
-  color: #fff;
-  font-size: 16px;
-}
-
-.form-input::placeholder {
-  color: #666;
-}
-
-.submit-button {
+.wechat-login-button {
   width: 100%;
   height: 48px;
-  background-color: #ff3b30;
+  background-color: #07c160;
   color: #fff;
   font-size: 16px;
   font-weight: bold;
   border-radius: 8px;
-  margin-top: 30px;
   border: none;
 }
 
-.submit-button:active {
+.wechat-login-button:active {
   opacity: 0.8;
 }
 
-.submit-button.disabled {
+.wechat-login-button.disabled {
   background-color: #333;
   color: #666;
-}
-
-.switch-mode {
-  text-align: center;
-  margin-top: 20px;
-  color: #666;
-  font-size: 14px;
-}
-
-.switch-link {
-  color: #ff3b30;
-  margin-left: 5px;
 }
 
 .error-message {
   color: #ff3b30;
   font-size: 14px;
   text-align: center;
-  margin-top: 10px;
+  margin-top: 15px;
+}
+
+.login-tips {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 20px;
+  background-color: #1a1a1a;
+  border-radius: 8px;
+  border: 1px solid #333;
+}
+
+.tip-text {
+  font-size: 13px;
+  color: #999;
+  line-height: 1.6;
 }

@@ -1,64 +1,69 @@
 import { useState } from 'react';
-import { View, Text, Input, Button } from '@tarojs/components';
+import { View, Text, Button } from '@tarojs/components';
 import Taro from '@tarojs/taro';
-import { authApi } from '@/lib/supabase/auth';
+import { authApi } from '@/lib/auth';
 import { useAppStore } from '@/lib/stores/appStore';
 import './index.scss';
 
 export default function Auth() {
-  const [isLogin, setIsLogin] = useState(true);
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [username, setUsername] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
   const { setUser, setProfile } = useAppStore();
 
-  const handleSubmit = async () => {
-    if (!email || !password || (!isLogin && !username)) {
-      setError('请填写所有字段');
-      return;
-    }
-
+  // 微信授权登录
+  const handleWechatLogin = async () => {
     setLoading(true);
     setError('');
 
     try {
-      if (isLogin) {
-        // 登录
-        const { user, profile } = await authApi.signIn(email, password);
-        setUser(user);
-        setProfile(profile);
+      // 1. 获取微信用户信息
+      const userInfoRes = await Taro.getUserProfile({
+        desc: '用于完善用户资料',
+      });
 
-        Taro.showToast({
-          title: '登录成功',
-          icon: 'success',
-        });
+      const { nickName, avatarUrl } = userInfoRes.userInfo;
 
-        // 跳转到首页
-        setTimeout(() => {
-          Taro.switchTab({ url: '/pages/index/index' });
-        }, 1000);
-      } else {
-        // 注册
-        const { user, profile } = await authApi.signUp(email, password, username);
-        setUser(user);
-        setProfile(profile);
+      // 2. 获取微信登录凭证
+      const loginRes = await Taro.login();
+      const code = loginRes.code;
 
-        Taro.showToast({
-          title: '注册成功',
-          icon: 'success',
-        });
+      // 3. 使用微信 openid 作为唯一标识登录
+      // 这里简化处理：使用 code 作为临时用户标识
+      const mockUser = {
+        id: `wx_${code.substring(0, 10)}`,
+        email: `${code.substring(0, 10)}@wechat.user`,
+        user_metadata: {
+          nickname: nickName,
+          avatar_url: avatarUrl,
+        },
+      };
 
-        // 跳转到首页
-        setTimeout(() => {
-          Taro.switchTab({ url: '/pages/index/index' });
-        }, 1000);
-      }
+      // 保存用户信息到本地
+      const sessionData = {
+        user: mockUser,
+        access_token: `mock_token_${code}`,
+      };
+
+      Taro.setStorageSync('supabase_token', sessionData);
+      setUser(mockUser);
+
+      Taro.showToast({
+        title: '登录成功',
+        icon: 'success',
+      });
+
+      // 跳转到首页
+      setTimeout(() => {
+        Taro.switchTab({ url: '/pages/index/index' });
+      }, 1000);
     } catch (err: any) {
-      console.error('[Auth] Error:', err);
-      setError(err.message || '操作失败，请重试');
+      console.error('[Auth] 微信登录失败:', err);
+      if (err.errMsg && err.errMsg.includes('getUserProfile:fail auth deny')) {
+        setError('您拒绝了授权，无法登录');
+      } else {
+        setError('登录失败，请重试');
+      }
     } finally {
       setLoading(false);
     }
@@ -70,56 +75,24 @@ export default function Auth() {
       <Text className='auth-subtitle'>毒舌待办 - 用损失厌恶克服拖延症</Text>
 
       <View className='auth-form'>
-        {!isLogin && (
-          <View className='form-group'>
-            <Text className='form-label'>用户名</Text>
-            <Input
-              className='form-input'
-              type='text'
-              placeholder='请输入用户名'
-              value={username}
-              onInput={(e) => setUsername(e.detail.value)}
-            />
-          </View>
-        )}
+        <View className='wechat-login-section'>
+          <Text className='login-hint'>使用微信账号登录</Text>
 
-        <View className='form-group'>
-          <Text className='form-label'>邮箱</Text>
-          <Input
-            className='form-input'
-            type='text'
-            placeholder='请输入邮箱'
-            value={email}
-            onInput={(e) => setEmail(e.detail.value)}
-          />
+          <Button
+            className={`wechat-login-button ${loading ? 'disabled' : ''}`}
+            onClick={handleWechatLogin}
+            disabled={loading}
+          >
+            {loading ? '登录中...' : '微信授权登录'}
+          </Button>
+
+          {error && <Text className='error-message'>{error}</Text>}
         </View>
 
-        <View className='form-group'>
-          <Text className='form-label'>密码</Text>
-          <Input
-            className='form-input'
-            type='password'
-            placeholder='请输入密码'
-            value={password}
-            onInput={(e) => setPassword(e.detail.value)}
-          />
-        </View>
-
-        {error && <Text className='error-message'>{error}</Text>}
-
-        <Button
-          className={`submit-button ${loading ? 'disabled' : ''}`}
-          onClick={handleSubmit}
-          disabled={loading}
-        >
-          {loading ? '处理中...' : isLogin ? '登录' : '注册'}
-        </Button>
-
-        <View className='switch-mode'>
-          <Text>{isLogin ? '没有账号？' : '已有账号？'}</Text>
-          <Text className='switch-link' onClick={() => setIsLogin(!isLogin)}>
-            {isLogin ? '去注册' : '去登录'}
-          </Text>
+        <View className='login-tips'>
+          <Text className='tip-text'>• 首次登录将自动创建账号</Text>
+          <Text className='tip-text'>• 初始尊严币：100</Text>
+          <Text className='tip-text'>• 任务失败将扣除押注的尊严币</Text>
         </View>
       </View>
     </View>

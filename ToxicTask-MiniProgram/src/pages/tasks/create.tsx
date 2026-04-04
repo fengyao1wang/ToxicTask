@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { View, Text, Input, Button, Picker } from '@tarojs/components';
+import { View, Text, Input, Button, Slider, PickerView, PickerViewColumn } from '@tarojs/components';
 import Taro from '@tarojs/taro';
 import { useAppStore } from '@/lib/stores/appStore';
 import { useTaskStore } from '@/lib/stores/taskStore';
@@ -12,15 +12,38 @@ export default function CreateTask() {
   const [title, setTitle] = useState('');
   const [betAmount, setBetAmount] = useState(10);
   const [hours, setHours] = useState(1);
+  const [minutes, setMinutes] = useState(0);
   const [loading, setLoading] = useState(false);
 
-  const betOptions = [5, 10, 20, 30, 50, 100];
-  const hourOptions = [1, 2, 3, 6, 12, 24, 48, 72];
+  const betOptions = [5, 10, 20, 30, 50];
+
+  // 生成小时和分钟的选项
+  const hoursRange = Array.from({ length: 72 }, (_, i) => i);
+  const minutesRange = Array.from({ length: 60 }, (_, i) => i);
+
+  const handlePickerChange = (e) => {
+    const [hourIndex, minuteIndex] = e.detail.value;
+    setHours(hoursRange[hourIndex]);
+    setMinutes(minutesRange[minuteIndex]);
+  };
+
+  const getTotalMinutes = () => {
+    return hours * 60 + minutes;
+  };
 
   const handleCreate = async () => {
     if (!title.trim()) {
       Taro.showToast({
         title: '请输入任务标题',
+        icon: 'none',
+      });
+      return;
+    }
+
+    const totalMinutes = getTotalMinutes();
+    if (totalMinutes === 0) {
+      Taro.showToast({
+        title: '请设置任务时限',
         icon: 'none',
       });
       return;
@@ -38,7 +61,7 @@ export default function CreateTask() {
 
     try {
       const deadline = new Date();
-      deadline.setHours(deadline.getHours() + hours);
+      deadline.setMinutes(deadline.getMinutes() + totalMinutes);
 
       const newTask = await createTask({
         user_id: user.id,
@@ -98,20 +121,57 @@ export default function CreateTask() {
             </View>
           ))}
         </View>
+
+        <View className='slider-section'>
+          <View className='slider-header'>
+            <Text className='slider-label'>滑动调整押注</Text>
+            <Text className='slider-value'>{betAmount} 币</Text>
+          </View>
+          <Slider
+            className='custom-slider'
+            min={1}
+            max={100}
+            step={1}
+            value={betAmount}
+            activeColor='#ff3b30'
+            backgroundColor='#333'
+            blockColor='#ff3b30'
+            blockSize={20}
+            onChange={(e) => setBetAmount(e.detail.value)}
+            onChanging={(e) => setBetAmount(e.detail.value)}
+          />
+        </View>
       </View>
 
       <View className='form-section'>
-        <Text className='section-title'>完成时限（小时）</Text>
-        <View className='hour-options'>
-          {hourOptions.map((hour) => (
-            <View
-              key={hour}
-              className={`hour-option ${hours === hour ? 'active' : ''}`}
-              onClick={() => setHours(hour)}
-            >
-              <Text className='hour-text'>{hour}h</Text>
-            </View>
-          ))}
+        <Text className='section-title'>完成时限</Text>
+
+        <View className='time-display'>
+          <Text className='time-value'>{hours} 小时 {minutes} 分钟</Text>
+        </View>
+
+        <View className='picker-container'>
+          <PickerView
+            indicatorStyle='height: 40px;'
+            className='time-picker'
+            value={[hours, minutes]}
+            onChange={handlePickerChange}
+          >
+            <PickerViewColumn>
+              {hoursRange.map((h) => (
+                <View key={h} className='picker-item'>
+                  <Text>{h} 小时</Text>
+                </View>
+              ))}
+            </PickerViewColumn>
+            <PickerViewColumn>
+              {minutesRange.map((m) => (
+                <View key={m} className='picker-item'>
+                  <Text>{m} 分钟</Text>
+                </View>
+              ))}
+            </PickerViewColumn>
+          </PickerView>
         </View>
       </View>
 

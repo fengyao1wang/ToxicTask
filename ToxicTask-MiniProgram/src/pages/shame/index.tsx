@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react';
 import { View, Text } from '@tarojs/components';
 import Taro from '@tarojs/taro';
-import { shameLogApi } from '@/lib/supabase/api';
 import { ShameLog } from '@/types';
 import './index.scss';
 
@@ -16,7 +15,8 @@ export default function Shame() {
   const fetchShameLogs = async () => {
     setLoading(true);
     try {
-      const logs = await shameLogApi.getAllShameLogs();
+      // 从本地存储加载耻辱记录
+      const logs = Taro.getStorageSync('toxictask_shame_logs') || [];
       setShameLogs(logs);
     } catch (error) {
       console.error('[Shame] Error fetching logs:', error);
@@ -48,7 +48,7 @@ export default function Shame() {
       {!loading && shameLogs.map((log) => (
         <View key={log.id} className='shame-card'>
           <View className='shame-header'>
-            <Text className='shame-task-title'>{log.task?.title || '未知任务'}</Text>
+            <Text className='shame-task-title'>{log.task_title || '未知任务'}</Text>
             <Text className='shame-date'>
               {new Date(log.created_at).toLocaleDateString('zh-CN')}
             </Text>
@@ -57,9 +57,7 @@ export default function Shame() {
             <Text className='comment-icon'>💀</Text>
             <Text className='comment-text'>{log.ai_comment}</Text>
           </View>
-          {log.task && (
-            <Text className='shame-bet'>损失: {log.task.bet_amount} 尊严币</Text>
-          )}
+          <Text className='shame-bet'>损失: {log.bet_amount} 尊严币</Text>
         </View>
       ))}
     </View>

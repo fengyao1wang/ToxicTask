@@ -26,15 +26,14 @@
   font-size: 16px;
 }
 
-.bet-options,
-.hour-options {
+.bet-options {
   display: flex;
   flex-wrap: wrap;
   gap: 10px;
+  margin-bottom: 15px;
 }
 
-.bet-option,
-.hour-option {
+.bet-option {
   flex: 0 0 calc(33.333% - 7px);
   height: 48px;
   background-color: #1a1a1a;
@@ -46,17 +45,81 @@
   cursor: pointer;
 }
 
-.bet-option.active,
-.hour-option.active {
+.bet-option.active {
   background-color: #ff3b30;
   border-color: #ff3b30;
 }
 
-.bet-text,
-.hour-text {
+.bet-text {
   color: #fff;
   font-size: 16px;
   font-weight: bold;
+}
+
+.slider-section {
+  margin-top: 15px;
+  padding: 15px;
+  background-color: #1a1a1a;
+  border-radius: 8px;
+  border: 1px solid #333;
+}
+
+.slider-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+}
+
+.slider-label {
+  font-size: 14px;
+  color: #999;
+}
+
+.slider-value {
+  font-size: 18px;
+  color: #ff3b30;
+  font-weight: bold;
+}
+
+.custom-slider {
+  width: 100%;
+}
+
+.time-display {
+  padding: 15px;
+  background-color: #1a1a1a;
+  border-radius: 8px;
+  border: 1px solid #333;
+  margin-bottom: 15px;
+  text-align: center;
+}
+
+.time-value {
+  font-size: 24px;
+  color: #ff3b30;
+  font-weight: bold;
+}
+
+.picker-container {
+  background-color: #1a1a1a;
+  border-radius: 8px;
+  border: 1px solid #333;
+  overflow: hidden;
+}
+
+.time-picker {
+  width: 100%;
+  height: 200px;
+}
+
+.picker-item {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 40px;
+  color: #fff;
+  font-size: 16px;
 }
 
 .warning-box {

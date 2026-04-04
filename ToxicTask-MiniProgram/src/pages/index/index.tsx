@@ -3,17 +3,71 @@ import { View, Text, Button } from '@tarojs/components';
 import Taro from '@tarojs/taro';
 import { useAppStore } from '@/lib/stores/appStore';
 import { useTaskStore } from '@/lib/stores/taskStore';
-import { authApi } from '@/lib/supabase/auth';
+import { authApi } from '@/lib/auth';
 import './index.scss';
 
 export default function Index() {
-  const { user, profile, setUser, setProfile } = useAppStore();
-  const { tasks, loading, fetchTasks } = useTaskStore();
+  const { user, profile, setUser, initProfile, updateDignityCoins } = useAppStore();
+  const { tasks, loading, fetchTasks, updateTaskStatus } = useTaskStore();
   const [checking, setChecking] = useState(true);
 
   useEffect(() => {
     checkAuth();
   }, []);
+
+  // 定时检查过期任务
+  useEffect(() => {
+    if (!user) return;
+
+    const checkExpiredTasks = async () => {
+      const now = new Date().getTime();
+      let hasChanges = false;
+
+      for (const task of tasks) {
+        if (task.status === 'pending') {
+          const deadline = new Date(task.deadline).getTime();
+          if (now > deadline) {
+            // 任务过期，标记为失败
+            await updateTaskStatus(task.id, 'failed');
+
+            // 扣除尊严币
+            const newCoins = Math.max(0, (profile?.dignity_coins || 0) - task.bet_amount);
+            updateDignityCoins(user.id, newCoins);
+
+            // 创建耻辱记录
+            const shameLog = {
+              id: `shame_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+              task_id: task.id,
+              user_id: user.id,
+              task_title: task.title,
+              bet_amount: task.bet_amount,
+              ai_comment: '任务超时未完成，真是令人失望！',
+              created_at: new Date().toISOString(),
+            };
+
+            const shameLogs = Taro.getStorageSync('toxictask_shame_logs') || [];
+            shameLogs.unshift(shameLog);
+            Taro.setStorageSync('toxictask_shame_logs', shameLogs);
+
+            hasChanges = true;
+          }
+        }
+      }
+
+      if (hasChanges) {
+        // 刷新任务列表
+        await fetchTasks(user.id);
+      }
+    };
+
+    // 立即检查一次
+    checkExpiredTasks();
+
+    // 每10秒检查一次
+    const timer = setInterval(checkExpiredTasks, 10000);
+
+    return () => clearInterval(timer);
+  }, [user, tasks, profile]);
 
   const checkAuth = async () => {
     try {
@@ -27,7 +81,9 @@ export default function Index() {
       const currentUser = await authApi.getCurrentUser();
       if (currentUser) {
         setUser(currentUser);
-        // 获取任务列表
+        // 初始化 profile（本地存储）
+        initProfile(currentUser.id);
+        // 获取任务列表（本地存储）
         await fetchTasks(currentUser.id);
       }
     } catch (error) {

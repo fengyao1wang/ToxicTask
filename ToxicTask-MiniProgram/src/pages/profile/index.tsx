@@ -2,28 +2,12 @@ import { useEffect, useState } from 'react';
 import { View, Text, Button } from '@tarojs/components';
 import Taro from '@tarojs/taro';
 import { useAppStore } from '@/lib/stores/appStore';
-import { authApi } from '@/lib/supabase/auth';
-import { profileApi } from '@/lib/supabase/api';
+import { authApi } from '@/lib/auth';
 import './index.scss';
 
 export default function Profile() {
   const { user, profile, setUser, setProfile } = useAppStore();
   const [loading, setLoading] = useState(false);
-
-  useEffect(() => {
-    loadProfile();
-  }, []);
-
-  const loadProfile = async () => {
-    try {
-      const currentProfile = await profileApi.getCurrentProfile();
-      if (currentProfile) {
-        setProfile(currentProfile);
-      }
-    } catch (error) {
-      console.error('[Profile] Error loading profile:', error);
-    }
-  };
 
   const handleLogout = async () => {
     Taro.showModal({

@@ -24,7 +24,8 @@ export interface ShameLog {
   id: string;
   task_id: string;
   user_id: string;
+  task_title: string;
+  bet_amount: number;
   ai_comment: string;
   created_at: string;
-  task?: Task;
 }
