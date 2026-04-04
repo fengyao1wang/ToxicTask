@@ -4,7 +4,7 @@
   "description": "ToxicTask 毒舌待办小程序",
   "appid": "touristappid",
   "setting": {
-    "urlCheck": true,
+    "urlCheck": false,
     "es6": false,
     "enhance": false,
     "compileHotReLoad": false,
