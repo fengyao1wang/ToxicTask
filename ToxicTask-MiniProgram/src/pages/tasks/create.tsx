@@ -14,6 +14,8 @@ export default function CreateTask() {
   const [hours, setHours] = useState(1);
   const [minutes, setMinutes] = useState(0);
   const [loading, setLoading] = useState(false);
+  const [taskType, setTaskType] = useState<'single' | 'repeat'>('single');
+  const [repeatDays, setRepeatDays] = useState(7);
 
   const betOptions = [5, 10, 20, 30, 50];
 
@@ -41,9 +43,17 @@ export default function CreateTask() {
     }
 
     const totalMinutes = getTotalMinutes();
-    if (totalMinutes === 0) {
+    if (taskType === 'single' && totalMinutes === 0) {
       Taro.showToast({
         title: '请设置任务时限',
+        icon: 'none',
+      });
+      return;
+    }
+
+    if (taskType === 'repeat' && repeatDays < 1) {
+      Taro.showToast({
+        title: '重复天数至少为1天',
         icon: 'none',
       });
       return;
@@ -69,8 +79,31 @@ export default function CreateTask() {
     setLoading(true);
 
     try {
-      const deadline = new Date();
-      deadline.setMinutes(deadline.getMinutes() + totalMinutes);
+      let deadline: Date;
+      let checkIns: any[] | undefined;
+
+      if (taskType === 'single') {
+        // 单次任务：从现在开始计算截止时间
+        deadline = new Date();
+        deadline.setMinutes(deadline.getMinutes() + totalMinutes);
+      } else {
+        // 重复任务：截止时间为从今天开始的第N天的23:59:59
+        deadline = new Date();
+        deadline.setDate(deadline.getDate() + repeatDays);
+        deadline.setHours(23, 59, 59, 999);
+
+        // 初始化打卡记录
+        checkIns = [];
+        const today = new Date();
+        for (let i = 0; i < repeatDays; i++) {
+          const checkDate = new Date(today);
+          checkDate.setDate(today.getDate() + i);
+          checkIns.push({
+            date: checkDate.toISOString().split('T')[0],
+            checked: false,
+          });
+        }
+      }
 
       const newTask = await createTask({
         user_id: user.id,
@@ -78,6 +111,9 @@ export default function CreateTask() {
         bet_amount: betAmount,
         status: 'pending',
         deadline: deadline.toISOString(),
+        task_type: taskType,
+        repeat_days: taskType === 'repeat' ? repeatDays : undefined,
+        check_ins: checkIns,
       });
 
       if (newTask) {
@@ -93,7 +129,7 @@ export default function CreateTask() {
           amount: -betAmount,
           balance_after: newCoins,
           source_id: newTask.id,
-          description: '任务押注',
+          description: taskType === 'single' ? '任务押注' : '重复任务押注',
           created_at: new Date().toISOString(),
         };
 
@@ -142,6 +178,24 @@ export default function CreateTask() {
       </View>
 
       <View className='form-section'>
+        <Text className='section-title'>任务类型</Text>
+        <View className='task-type-options'>
+          <View
+            className={`type-option ${taskType === 'single' ? 'active' : ''}`}
+            onClick={() => setTaskType('single')}
+          >
+            <Text className='type-text'>单次任务</Text>
+          </View>
+          <View
+            className={`type-option ${taskType === 'repeat' ? 'active' : ''}`}
+            onClick={() => setTaskType('repeat')}
+          >
+            <Text className='type-text'>重复任务</Text>
+          </View>
+        </View>
+      </View>
+
+      <View className='form-section'>
         <Text className='section-title'>押注金额（尊严币）</Text>
         <View className='bet-options'>
           {betOptions.map((amount) => (
@@ -176,42 +230,79 @@ export default function CreateTask() {
         </View>
       </View>
 
-      <View className='form-section'>
-        <Text className='section-title'>完成时限</Text>
+      {taskType === 'single' ? (
+        <View className='form-section'>
+          <Text className='section-title'>完成时限</Text>
 
-        <View className='time-display'>
-          <Text className='time-value'>{hours} 小时 {minutes} 分钟</Text>
-        </View>
+          <View className='time-display'>
+            <Text className='time-value'>{hours} 小时 {minutes} 分钟</Text>
+          </View>
 
-        <View className='picker-container'>
-          <PickerView
-            indicatorStyle='height: 40px;'
-            className='time-picker'
-            value={[hours, minutes]}
-            onChange={handlePickerChange}
-          >
-            <PickerViewColumn>
-              {hoursRange.map((h) => (
-                <View key={h} className='picker-item'>
-                  <Text>{h} 小时</Text>
-                </View>
-              ))}
-            </PickerViewColumn>
-            <PickerViewColumn>
-              {minutesRange.map((m) => (
-                <View key={m} className='picker-item'>
-                  <Text>{m} 分钟</Text>
-                </View>
-              ))}
-            </PickerViewColumn>
-          </PickerView>
+          <View className='picker-container'>
+            <PickerView
+              indicatorStyle='height: 40px;'
+              className='time-picker'
+              value={[hours, minutes]}
+              onChange={handlePickerChange}
+            >
+              <PickerViewColumn>
+                {hoursRange.map((h) => (
+                  <View key={h} className='picker-item'>
+                    <Text>{h} 小时</Text>
+                  </View>
+                ))}
+              </PickerViewColumn>
+              <PickerViewColumn>
+                {minutesRange.map((m) => (
+                  <View key={m} className='picker-item'>
+                    <Text>{m} 分钟</Text>
+                  </View>
+                ))}
+              </PickerViewColumn>
+            </PickerView>
+          </View>
         </View>
-      </View>
+      ) : (
+        <View className='form-section'>
+          <Text className='section-title'>重复天数</Text>
+          <View className='repeat-days-options'>
+            {[3, 7, 14, 21, 30].map((days) => (
+              <View
+                key={days}
+                className={`repeat-option ${repeatDays === days ? 'active' : ''}`}
+                onClick={() => setRepeatDays(days)}
+              >
+                <Text className='repeat-text'>{days}天</Text>
+              </View>
+            ))}
+          </View>
+          <View className='custom-days-input'>
+            <Text className='input-label'>自定义天数：</Text>
+            <Input
+              className='days-input'
+              type='number'
+              placeholder='输入天数'
+              value={repeatDays.toString()}
+              onInput={(e) => {
+                const value = parseInt(e.detail.value) || 1;
+                setRepeatDays(Math.max(1, Math.min(365, value)));
+              }}
+            />
+            <Text className='input-unit'>天</Text>
+          </View>
+          <View className='repeat-hint'>
+            <Text className='hint-text'>需要连续{repeatDays}天打卡，任意一天未打卡即失败</Text>
+          </View>
+        </View>
+      )}
 
       <View className='warning-box'>
         <Text className='warning-text'>⚠️ 警告</Text>
         <Text className='warning-desc'>
-          任务超时未完成将扣除 {betAmount} 尊严币，并触发 AI 毒舌嘲讽，记录将公开至耻辱墙！
+          {taskType === 'single'
+            ? `任务超时未完成将扣除 ${betAmount} 尊严币，并触发 AI 毒舌嘲讽，记录将公开至耻辱墙！`
+            : `任意一天未打卡将扣除 ${betAmount} 尊严币，并触发 AI 毒舌嘲讽，记录将公开至耻辱墙！`
+          }
         </Text>
       </View>
 

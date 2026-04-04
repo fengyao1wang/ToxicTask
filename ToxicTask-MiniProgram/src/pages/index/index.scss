@@ -22,6 +22,47 @@
   display: block;
 }
 
+/* 调试面板 */
+.debug-panel {
+  background-color: #1a1a1a;
+  border: 2px solid #ff9500;
+  border-radius: 12px;
+  padding: 16px;
+  margin-bottom: 20px;
+}
+
+.debug-title {
+  font-size: 14px;
+  color: #ff9500;
+  display: block;
+  margin-bottom: 12px;
+  font-weight: bold;
+}
+
+.debug-buttons {
+  display: flex;
+  gap: 10px;
+}
+
+.debug-button {
+  flex: 1;
+  background-color: #ff9500 !important;
+  color: #000 !important;
+  font-size: 13px !important;
+  font-weight: bold;
+  border-radius: 6px;
+  border: none;
+}
+
+.debug-button.reset {
+  background-color: #666 !important;
+  color: #fff !important;
+}
+
+.debug-button:active {
+  opacity: 0.8;
+}
+
 .task-list {
   margin-bottom: 80px;
 }
@@ -74,12 +115,27 @@
   opacity: 0.7;
 }
 
+.task-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
 .task-title {
   font-size: 18px;
   font-weight: bold;
   color: #fff;
-  display: block;
-  margin-bottom: 12px;
+  flex: 1;
+}
+
+.task-type-badge {
+  font-size: 12px;
+  color: #fff;
+  background-color: #00ff88;
+  padding: 4px 8px;
+  border-radius: 4px;
+  margin-left: 8px;
 }
 
 .task-info {
@@ -118,6 +174,96 @@
 
 .complete-task-button:active {
   opacity: 0.8;
+}
+
+/* 打卡按钮 */
+.checkin-button {
+  width: 100%;
+  background-color: #00ff88 !important;
+  color: #000 !important;
+  font-size: 14px !important;
+  font-weight: bold;
+  border-radius: 6px;
+  border: none;
+  margin-top: 8px;
+}
+
+.checkin-button:active {
+  opacity: 0.8;
+}
+
+/* 已打卡标记 */
+.checked-badge {
+  width: 100%;
+  padding: 8px;
+  background-color: rgba(0, 255, 136, 0.1);
+  border: 1px solid #00ff88;
+  border-radius: 6px;
+  margin-top: 8px;
+  text-align: center;
+}
+
+.checked-text {
+  font-size: 14px;
+  color: #00ff88;
+  font-weight: bold;
+}
+
+/* 打卡进度 */
+.check-in-progress {
+  margin: 12px 0;
+  padding: 12px;
+  background-color: rgba(0, 255, 136, 0.05);
+  border-radius: 8px;
+}
+
+.check-in-dots {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.check-dot {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background-color: #2a2a2a;
+  border: 2px solid #444;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.check-dot.checked {
+  background-color: #00ff88;
+  border-color: #00ff88;
+}
+
+.check-dot.today {
+  border-color: #ff3b30;
+  border-width: 3px;
+}
+
+.check-dot.checked.today {
+  border-color: #00ff88;
+}
+
+.dot-text {
+  font-size: 12px;
+  color: #fff;
+  font-weight: bold;
+}
+
+.check-dot.checked .dot-text {
+  color: #000;
+}
+
+.progress-text {
+  font-size: 12px;
+  color: #00ff88;
+  text-align: center;
+  display: block;
 }
 
 .create-button {

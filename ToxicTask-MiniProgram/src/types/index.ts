@@ -8,6 +8,7 @@ export interface Profile {
 }
 
 export type TaskStatus = 'pending' | 'completed' | 'failed';
+export type TaskType = 'single' | 'repeat'; // 单次任务 | 重复任务
 
 export interface Task {
   id: string;
@@ -18,6 +19,18 @@ export interface Task {
   deadline: string;
   created_at: string;
   updated_at: string;
+
+  // 重复任务相关字段
+  task_type: TaskType; // 任务类型（默认为 'single'）
+  repeat_days?: number; // 重复天数（如7天）
+  check_ins?: CheckIn[]; // 打卡记录
+}
+
+// 打卡记录
+export interface CheckIn {
+  date: string; // YYYY-MM-DD 格式
+  checked: boolean; // 是否已打卡
+  checked_at?: string; // 打卡时间
 }
 
 export interface ShameLog {

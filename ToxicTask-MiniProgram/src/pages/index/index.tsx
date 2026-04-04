@@ -9,9 +9,10 @@ import './index.scss';
 
 export default function Index() {
   const { user, profile, setUser, initProfile, updateDignityCoins } = useAppStore();
-  const { tasks, loading, fetchTasks, updateTaskStatus } = useTaskStore();
+  const { tasks, loading, fetchTasks, updateTaskStatus, checkInTask } = useTaskStore();
   const { checkAndUnlockAchievements } = useAchievementStore();
   const [checking, setChecking] = useState(true);
+  const [debugDate, setDebugDate] = useState<string | null>(null); // 调试用的模拟日期
 
   useEffect(() => {
     checkAuth();
@@ -37,13 +38,50 @@ export default function Index() {
 
     const checkExpiredTasks = async () => {
       const now = new Date().getTime();
+      const today = debugDate || new Date().toISOString().split('T')[0];
       let hasChanges = false;
 
       for (const task of tasks) {
         if (task.status === 'pending') {
           const deadline = new Date(task.deadline).getTime();
-          if (now > deadline) {
-            // 任务过期，标记为失败
+
+          if (task.task_type === 'repeat' && task.check_ins) {
+            // 重复任务：检查是否有未打卡的过期日期
+            const hasMissedCheckIn = task.check_ins.some((checkIn) => {
+              return checkIn.date < today && !checkIn.checked;
+            });
+
+            if (hasMissedCheckIn || now > deadline) {
+              // 任务失败
+              await updateTaskStatus(task.id, 'failed');
+
+              // 扣除尊严币
+              const newCoins = Math.max(0, (profile?.dignity_coins || 0) - task.bet_amount);
+              updateDignityCoins(user.id, newCoins);
+
+              // 创建耻辱记录
+              const shameLog = {
+                id: `shame_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+                task_id: task.id,
+                user_id: user.id,
+                task_title: task.title,
+                bet_amount: task.bet_amount,
+                ai_comment: '重复任务未能坚持打卡，意志力太薄弱了！',
+                created_at: new Date().toISOString(),
+              };
+
+              console.log('[Index] 创建耻辱记录:', shameLog);
+
+              const shameLogs = Taro.getStorageSync('toxictask_shame_logs') || [];
+              shameLogs.unshift(shameLog);
+              Taro.setStorageSync('toxictask_shame_logs', shameLogs);
+
+              console.log('[Index] 耻辱记录已保存，总数:', shameLogs.length);
+
+              hasChanges = true;
+            }
+          } else if (task.task_type === 'single' && now > deadline) {
+            // 单次任务过期
             await updateTaskStatus(task.id, 'failed');
 
             // 扣除尊严币
@@ -87,7 +125,7 @@ export default function Index() {
     const timer = setInterval(checkExpiredTasks, 10000);
 
     return () => clearInterval(timer);
-  }, [user, tasks, profile]);
+  }, [user, tasks, profile, debugDate]);
 
   const checkAuth = async () => {
     try {
@@ -177,6 +215,70 @@ export default function Index() {
     });
   };
 
+  const handleCheckIn = async (taskId: string) => {
+    if (!user) return;
+
+    const today = debugDate || new Date().toISOString().split('T')[0];
+
+    try {
+      await checkInTask(taskId, today);
+
+      Taro.showToast({
+        title: '打卡成功！',
+        icon: 'success',
+      });
+
+      // 刷新任务列表
+      await fetchTasks(user.id);
+
+      // 检查任务是否全部完成
+      const updatedTasks = await new Promise<any[]>((resolve) => {
+        setTimeout(() => {
+          resolve(useTaskStore.getState().tasks);
+        }, 100);
+      });
+
+      const task = updatedTasks.find((t) => t.id === taskId);
+      if (task && task.check_ins) {
+        const allChecked = task.check_ins.every((checkIn) => checkIn.checked);
+        if (allChecked) {
+          // 所有打卡完成，任务成功
+          setTimeout(() => {
+            handleCompleteTask(taskId, task.bet_amount);
+          }, 500);
+        }
+      }
+    } catch (error) {
+      console.error('[Index] 打卡失败:', error);
+      Taro.showToast({
+        title: '打卡失败',
+        icon: 'none',
+      });
+    }
+  };
+
+  // 调试功能：推进一天
+  const handleDebugNextDay = () => {
+    const currentDate = debugDate ? new Date(debugDate) : new Date();
+    currentDate.setDate(currentDate.getDate() + 1);
+    const newDate = currentDate.toISOString().split('T')[0];
+    setDebugDate(newDate);
+
+    Taro.showToast({
+      title: `时间推进到 ${newDate}`,
+      icon: 'none',
+    });
+  };
+
+  // 调试功能：重置日期
+  const handleDebugResetDate = () => {
+    setDebugDate(null);
+    Taro.showToast({
+      title: '已重置为真实日期',
+      icon: 'success',
+    });
+  };
+
   if (checking) {
     return (
       <View className='index-container'>
@@ -192,6 +294,21 @@ export default function Index() {
         <Text className='header-subtitle'>尊严币: {profile?.dignity_coins || 0}</Text>
       </View>
 
+      {/* 调试工具 */}
+      <View className='debug-panel'>
+        <Text className='debug-title'>
+          🛠️ 测试工具 - 当前日期: {debugDate || new Date().toISOString().split('T')[0]}
+        </Text>
+        <View className='debug-buttons'>
+          <Button className='debug-button' size='mini' onClick={handleDebugNextDay}>
+            推进一天 ⏭️
+          </Button>
+          <Button className='debug-button reset' size='mini' onClick={handleDebugResetDate}>
+            重置日期 🔄
+          </Button>
+        </View>
+      </View>
+
       <View className='task-list'>
         {loading && <Text className='loading-text'>加载中...</Text>}
 
@@ -202,30 +319,79 @@ export default function Index() {
           </View>
         )}
 
-        {!loading && tasks.map((task) => (
-          <View key={task.id} className={`task-card task-${task.status}`}>
-            <Text className='task-title'>{task.title}</Text>
-            <View className='task-info'>
-              <Text className='task-bet'>押注: {task.bet_amount} 币</Text>
-              <Text className='task-status'>
-                {task.status === 'pending' ? '进行中' :
-                 task.status === 'completed' ? '已完成' : '已失败'}
+        {!loading && tasks.map((task) => {
+          const today = debugDate || new Date().toISOString().split('T')[0];
+          const todayCheckIn = task.check_ins?.find((c) => c.date === today);
+          const canCheckInToday = task.task_type === 'repeat' && todayCheckIn && !todayCheckIn.checked;
+
+          return (
+            <View key={task.id} className={`task-card task-${task.status}`}>
+              <View className='task-header'>
+                <Text className='task-title'>{task.title}</Text>
+                <Text className='task-type-badge'>
+                  {task.task_type === 'single' ? '单次' : '重复'}
+                </Text>
+              </View>
+              <View className='task-info'>
+                <Text className='task-bet'>押注: {task.bet_amount} 币</Text>
+                <Text className='task-status'>
+                  {task.status === 'pending' ? '进行中' :
+                   task.status === 'completed' ? '已完成' : '已失败'}
+                </Text>
+              </View>
+              <Text className='task-deadline'>
+                截止: {new Date(task.deadline).toLocaleString('zh-CN')}
               </Text>
+
+              {/* 重复任务显示打卡进度 */}
+              {task.task_type === 'repeat' && task.check_ins && (
+                <View className='check-in-progress'>
+                  <View className='check-in-dots'>
+                    {task.check_ins.map((checkIn, index) => (
+                      <View
+                        key={index}
+                        className={`check-dot ${checkIn.checked ? 'checked' : ''} ${
+                          checkIn.date === today ? 'today' : ''
+                        }`}
+                      >
+                        <Text className='dot-text'>{index + 1}</Text>
+                      </View>
+                    ))}
+                  </View>
+                  <Text className='progress-text'>
+                    已打卡 {task.check_ins.filter((c) => c.checked).length}/{task.check_ins.length} 天
+                  </Text>
+                </View>
+              )}
+
+              {task.status === 'pending' && (
+                <>
+                  {task.task_type === 'single' ? (
+                    <Button
+                      className='complete-task-button'
+                      size='mini'
+                      onClick={() => handleCompleteTask(task.id, task.bet_amount)}
+                    >
+                      完成任务
+                    </Button>
+                  ) : canCheckInToday ? (
+                    <Button
+                      className='checkin-button'
+                      size='mini'
+                      onClick={() => handleCheckIn(task.id)}
+                    >
+                      今日打卡
+                    </Button>
+                  ) : todayCheckIn?.checked ? (
+                    <View className='checked-badge'>
+                      <Text className='checked-text'>✓ 今日已打卡</Text>
+                    </View>
+                  ) : null}
+                </>
+              )}
             </View>
-            <Text className='task-deadline'>
-              截止: {new Date(task.deadline).toLocaleString('zh-CN')}
-            </Text>
-            {task.status === 'pending' && (
-              <Button
-                className='complete-task-button'
-                size='mini'
-                onClick={() => handleCompleteTask(task.id, task.bet_amount)}
-              >
-                完成任务
-              </Button>
-            )}
-          </View>
-        ))}
+          );
+        })}
       </View>
 
       <Button className='create-button' onClick={handleCreateTask}>

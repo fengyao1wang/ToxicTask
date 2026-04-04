@@ -11,6 +11,7 @@ interface TaskState {
   fetchTasks: (userId: string) => Promise<void>;
   createTask: (task: Omit<Task, 'id' | 'created_at' | 'updated_at'>) => Promise<Task | null>;
   updateTaskStatus: (taskId: string, status: 'pending' | 'completed' | 'failed') => Promise<void>;
+  checkInTask: (taskId: string, date: string) => Promise<void>;
   deleteTask: (taskId: string) => Promise<void>;
   clearError: () => void;
 }
@@ -54,7 +55,12 @@ export const useTaskStore = create<TaskState>((set, get) => ({
     set({ loading: true, error: null });
     try {
       const tasks = loadTasksFromStorage(userId);
-      set({ tasks, loading: false });
+      // 为旧任务添加默认的 task_type
+      const tasksWithType = tasks.map((task) => ({
+        ...task,
+        task_type: task.task_type || 'single',
+      }));
+      set({ tasks: tasksWithType, loading: false });
     } catch (error) {
       console.error('[TaskStore][Error] 获取任务失败:', error);
       set({ error: '获取任务失败', loading: false });
@@ -70,6 +76,7 @@ export const useTaskStore = create<TaskState>((set, get) => ({
         id: generateId(),
         created_at: now,
         updated_at: now,
+        task_type: task.task_type || 'single', // 默认为单次任务
       };
 
       const userId = task.user_id;
@@ -117,6 +124,35 @@ export const useTaskStore = create<TaskState>((set, get) => ({
     } catch (error) {
       console.error('[TaskStore][Error] 更新任务状态失败:', error);
       set({ error: '更新任务状态失败', loading: false });
+    }
+  },
+
+  checkInTask: async (taskId: string, date: string) => {
+    set({ loading: true, error: null });
+    try {
+      const state = get();
+      const updatedTasks = state.tasks.map((task) => {
+        if (task.id === taskId && task.task_type === 'repeat' && task.check_ins) {
+          const updatedCheckIns = task.check_ins.map((checkIn) =>
+            checkIn.date === date
+              ? { ...checkIn, checked: true, checked_at: new Date().toISOString() }
+              : checkIn
+          );
+          return { ...task, check_ins: updatedCheckIns, updated_at: new Date().toISOString() };
+        }
+        return task;
+      });
+
+      // 保存到本地存储
+      if (updatedTasks.length > 0) {
+        const userId = updatedTasks[0].user_id;
+        saveTasksToStorage(userId, updatedTasks);
+      }
+
+      set({ tasks: updatedTasks, loading: false });
+    } catch (error) {
+      console.error('[TaskStore][Error] 打卡失败:', error);
+      set({ error: '打卡失败', loading: false });
     }
   },
 
