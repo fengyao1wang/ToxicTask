@@ -1,4 +1,4 @@
-import { View, Text, StyleSheet, FlatList, TouchableOpacity, ActivityIndicator, Modal, TextInput } from 'react-native';
+import { View, Text, StyleSheet, FlatList, TouchableOpacity, ActivityIndicator, Modal, TextInput, Alert } from 'react-native';
 import { useEffect, useState } from 'react';
 import { useAppStore } from '@/lib/stores/appStore';
 import { taskApi, profileApi } from '@/lib/supabase';
@@ -37,23 +37,23 @@ export default function HomeScreen() {
 
   const handleCreateTask = async () => {
     if (!title.trim()) {
-      alert('错误：请输入任务名称');
+      Alert.alert('错误', '请输入任务名称');
       return;
     }
 
     if (!profile) {
-      alert('错误：请先登录');
+      Alert.alert('错误', '请先登录');
       return;
     }
 
     const totalMinutes = parseInt(hours || '0') * 60 + parseInt(minutes || '0');
     if (totalMinutes <= 0) {
-      alert('错误：请设置有效的倒计时');
+      Alert.alert('错误', '请设置有效的倒计时');
       return;
     }
 
     if (betAmount > profile.dignity_coins) {
-      alert('错误：尊严币不足');
+      Alert.alert('错误', '尊严币不足');
       return;
     }
 
@@ -91,11 +91,11 @@ export default function HomeScreen() {
         setBetAmount(10);
         setShowCreateModal(false);
 
-        alert('成功：任务创建成功！');
+        Alert.alert('成功', '任务创建成功！');
       }
     } catch (error) {
       console.error('[HomeScreen][Error] 创建任务失败:', error);
-      alert('错误：创建任务失败');
+      Alert.alert('错误', '创建任务失败');
     } finally {
       setCreating(false);
     }
@@ -106,22 +106,23 @@ export default function HomeScreen() {
 
     if (!profile) {
       console.error('[HomeScreen][Error] profile 不存在');
-      alert('错误：用户信息不存在');
+      Alert.alert('错误', '用户信息不存在');
       return;
     }
 
-    const confirmed = window.confirm(
-      `确认完成任务「${task.title}」吗？\n将退还 ${task.bet_amount} 尊严币`
-    );
+    Alert.alert(
+      '完成任务',
+      `确认完成任务「${task.title}」吗？\n将退还 ${task.bet_amount} 尊严币`,
+      [
+        { text: '取消', style: 'cancel', onPress: () => {
+          console.log('[HomeScreen][Info] 用户取消完成任务');
+        }},
+        {
+          text: '确认',
+          onPress: async () => {
+            console.log('[HomeScreen][Info] 用户确认完成任务');
 
-    if (!confirmed) {
-      console.log('[HomeScreen][Info] 用户取消完成任务');
-      return;
-    }
-
-    console.log('[HomeScreen][Info] 用户确认完成任务');
-
-    const success = await completeTask(
+            const success = await completeTask(
       task.id,
       task.bet_amount,
       profile.id,
@@ -140,10 +141,14 @@ export default function HomeScreen() {
       // 重新加载任务列表
       await loadTasks();
 
-      alert('成功：任务完成！押金已退还');
+      Alert.alert('成功', '任务完成！押金已退还');
     } else {
-      alert('错误：完成任务失败');
+      Alert.alert('错误', '完成任务失败');
     }
+          },
+        },
+      ]
+    );
   };
 
   const getStatusColor = (status: string) => {

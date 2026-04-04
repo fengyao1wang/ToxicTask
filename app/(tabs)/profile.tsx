@@ -1,4 +1,4 @@
-import { View, Text, StyleSheet, TouchableOpacity, ScrollView } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, ScrollView, Alert } from 'react-native';
 import { useEffect, useState } from 'react';
 import { useAppStore } from '@/lib/stores/appStore';
 import { authApi, taskApi } from '@/lib/supabase';
@@ -49,13 +49,23 @@ export default function ProfileScreen() {
   };
 
   const handleLogout = async () => {
-    const confirmed = window.confirm('确定要退出登录吗？');
-    if (confirmed) {
-      await authApi.signOut();
-      setProfile(null);
-      setUser(null);
-      router.replace('/auth');
-    }
+    Alert.alert(
+      '退出登录',
+      '确定要退出登录吗？',
+      [
+        { text: '取消', style: 'cancel' },
+        {
+          text: '确定',
+          style: 'destructive',
+          onPress: async () => {
+            await authApi.signOut();
+            setProfile(null);
+            setUser(null);
+            router.replace('/auth');
+          },
+        },
+      ]
+    );
   };
 
   if (!profile) {
