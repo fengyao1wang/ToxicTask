@@ -43,6 +43,14 @@ export default function Profile() {
     });
   };
 
+  const handleNavigateToCheckIn = () => {
+    Taro.navigateTo({ url: '/pages/checkin/index' });
+  };
+
+  const handleNavigateToAchievements = () => {
+    Taro.navigateTo({ url: '/pages/achievements/index' });
+  };
+
   return (
     <View className='profile-container'>
       <View className='profile-header'>
@@ -58,6 +66,33 @@ export default function Profile() {
         <Text className='coins-label'>尊严币余额</Text>
         <Text className='coins-value'>{profile?.dignity_coins || 0}</Text>
         <Text className='coins-hint'>完成任务可获得押金返还</Text>
+      </View>
+
+      {/* 尊严币获取入口 */}
+      <View className='earn-coins-section'>
+        <Text className='section-title'>获取尊严币</Text>
+        <View className='earn-coins-grid'>
+          <View className='earn-coin-card' onClick={handleNavigateToCheckIn}>
+            <Text className='earn-coin-icon'>📅</Text>
+            <Text className='earn-coin-title'>每日签到</Text>
+            <Text className='earn-coin-reward'>+5 币/天</Text>
+          </View>
+          <View className='earn-coin-card' onClick={handleNavigateToAchievements}>
+            <Text className='earn-coin-icon'>🏆</Text>
+            <Text className='earn-coin-title'>成就系统</Text>
+            <Text className='earn-coin-reward'>查看成就</Text>
+          </View>
+          <View className='earn-coin-card disabled'>
+            <Text className='earn-coin-icon'>👥</Text>
+            <Text className='earn-coin-title'>邀请好友</Text>
+            <Text className='earn-coin-reward'>敬请期待</Text>
+          </View>
+          <View className='earn-coin-card disabled'>
+            <Text className='earn-coin-icon'>📺</Text>
+            <Text className='earn-coin-title'>观看广告</Text>
+            <Text className='earn-coin-reward'>敬请期待</Text>
+          </View>
+        </View>
       </View>
 
       <View className='stats-section'>

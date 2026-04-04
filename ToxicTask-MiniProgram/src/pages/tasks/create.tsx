@@ -6,7 +6,7 @@ import { useTaskStore } from '@/lib/stores/taskStore';
 import './create.scss';
 
 export default function CreateTask() {
-  const { user } = useAppStore();
+  const { user, profile, updateDignityCoins } = useAppStore();
   const { createTask } = useTaskStore();
 
   const [title, setTitle] = useState('');
@@ -49,9 +49,18 @@ export default function CreateTask() {
       return;
     }
 
-    if (!user) {
+    if (!user || !profile) {
       Taro.showToast({
         title: '请先登录',
+        icon: 'none',
+      });
+      return;
+    }
+
+    // 检查余额是否足够
+    if (profile.dignity_coins < betAmount) {
+      Taro.showToast({
+        title: '尊严币余额不足',
         icon: 'none',
       });
       return;
@@ -72,6 +81,30 @@ export default function CreateTask() {
       });
 
       if (newTask) {
+        // 扣除押金
+        const newCoins = profile.dignity_coins - betAmount;
+        updateDignityCoins(user.id, newCoins);
+
+        // 创建交易记录
+        const transaction = {
+          id: `trans_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+          user_id: user.id,
+          type: 'task_bet',
+          amount: -betAmount,
+          balance_after: newCoins,
+          source_id: newTask.id,
+          description: '任务押注',
+          created_at: new Date().toISOString(),
+        };
+
+        const allTransactions = Taro.getStorageSync('toxictask_transactions') || {};
+        const userTransactions = allTransactions[user.id] || [];
+        userTransactions.unshift(transaction);
+        allTransactions[user.id] = userTransactions;
+        Taro.setStorageSync('toxictask_transactions', allTransactions);
+
+        console.log('[CreateTask] 押金已扣除:', betAmount, '剩余:', newCoins);
+
         Taro.showToast({
           title: '任务创建成功',
           icon: 'success',

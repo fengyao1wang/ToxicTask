@@ -102,6 +102,22 @@
   font-size: 12px;
   color: #666;
   display: block;
+  margin-bottom: 12px;
+}
+
+.complete-task-button {
+  width: 100%;
+  background-color: #00ff00 !important;
+  color: #000 !important;
+  font-size: 14px !important;
+  font-weight: bold;
+  border-radius: 6px;
+  border: none;
+  margin-top: 8px;
+}
+
+.complete-task-button:active {
+  opacity: 0.8;
 }
 
 .create-button {

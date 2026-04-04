@@ -103,6 +103,14 @@ export const useTaskStore = create<TaskState>((set, get) => ({
       if (updatedTasks.length > 0) {
         const userId = updatedTasks[0].user_id;
         saveTasksToStorage(userId, updatedTasks);
+
+        // TODO: 如果任务完成，触发成就检查
+        // 暂时注释掉，避免动态导入导致超时问题
+        // if (status === 'completed') {
+        //   import('./achievementStore').then(({ useAchievementStore }) => {
+        //     useAchievementStore.getState().checkAndUnlockAchievements(userId);
+        //   });
+        // }
       }
 
       set({ tasks: updatedTasks, loading: false });

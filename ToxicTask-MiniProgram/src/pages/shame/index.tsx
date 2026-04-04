@@ -17,6 +17,7 @@ export default function Shame() {
     try {
       // 从本地存储加载耻辱记录
       const logs = Taro.getStorageSync('toxictask_shame_logs') || [];
+      console.log('[Shame] 加载耻辱记录，总数:', logs.length, logs);
       setShameLogs(logs);
     } catch (error) {
       console.error('[Shame] Error fetching logs:', error);

@@ -63,6 +63,68 @@
   display: block;
 }
 
+/* 获取尊严币入口 */
+.earn-coins-section {
+  margin-bottom: 30px;
+}
+
+.section-title {
+  font-size: 18px;
+  font-weight: bold;
+  color: #fff;
+  display: block;
+  margin-bottom: 15px;
+}
+
+.earn-coins-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+}
+
+.earn-coin-card {
+  background-color: #1a1a1a;
+  border: 2px solid #333;
+  border-radius: 12px;
+  padding: 20px 15px;
+  text-align: center;
+  transition: all 0.3s ease;
+}
+
+.earn-coin-card:active {
+  transform: scale(0.98);
+  border-color: #00ff88;
+}
+
+.earn-coin-card.disabled {
+  opacity: 0.5;
+  border-color: #222;
+}
+
+.earn-coin-icon {
+  font-size: 32px;
+  display: block;
+  margin-bottom: 8px;
+}
+
+.earn-coin-title {
+  font-size: 14px;
+  font-weight: bold;
+  color: #fff;
+  display: block;
+  margin-bottom: 5px;
+}
+
+.earn-coin-reward {
+  font-size: 12px;
+  color: #00ff88;
+  display: block;
+}
+
+.earn-coin-card.disabled .earn-coin-reward {
+  color: #666;
+}
+
 .stats-section {
   display: flex;
   gap: 10px;

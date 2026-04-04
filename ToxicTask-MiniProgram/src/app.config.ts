@@ -4,7 +4,9 @@ export default defineAppConfig({
     'pages/auth/index',
     'pages/tasks/create',
     'pages/shame/index',
-    'pages/profile/index'
+    'pages/profile/index',
+    'pages/checkin/index',
+    'pages/achievements/index'
   ],
   tabBar: {
     color: '#666',

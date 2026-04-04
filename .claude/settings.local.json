@@ -27,7 +27,14 @@
       "Bash(git push:*)",
       "Bash(git remote:*)",
       "Bash(ipconfig)",
-      "Bash(eas build:configure)"
+      "Bash(eas build:configure)",
+      "Bash(npm --version)",
+      "Bash(mkdir:*)",
+      "Bash(node generate-icons.js)",
+      "Bash(python generate-icons.py)",
+      "Bash(ls:*)",
+      "Bash(rm:*)",
+      "Bash(xargs grep:*)"
     ]
   }
 }

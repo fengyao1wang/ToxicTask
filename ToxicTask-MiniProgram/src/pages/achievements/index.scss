@@ -1,0 +1,226 @@
+.achievements-container {
+  min-height: 100vh;
+  background: linear-gradient(180deg, #1a1a1a 0%, #0a0a0a 100%);
+  padding: 40px 32px;
+}
+
+/* 顶部统计 */
+.achievements-header {
+  text-align: center;
+  margin-bottom: 48px;
+}
+
+.achievements-title {
+  font-size: 48px;
+  font-weight: bold;
+  color: #ffffff;
+  margin-bottom: 24px;
+}
+
+.achievements-stats {
+  display: flex;
+  align-items: baseline;
+  justify-content: center;
+  margin-bottom: 16px;
+}
+
+.stats-unlocked {
+  font-size: 72px;
+  font-weight: bold;
+  color: #00ff88;
+  line-height: 1;
+}
+
+.stats-separator {
+  font-size: 48px;
+  color: #666666;
+  margin: 0 8px;
+}
+
+.stats-total {
+  font-size: 48px;
+  color: #666666;
+  line-height: 1;
+}
+
+.achievements-subtitle {
+  font-size: 28px;
+  color: #888888;
+}
+
+/* 成就分组 */
+.achievements-section {
+  margin-bottom: 48px;
+}
+
+.section-title {
+  font-size: 32px;
+  font-weight: bold;
+  color: #ffffff;
+  margin-bottom: 24px;
+}
+
+/* 成就列表 */
+.achievements-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* 成就卡片 */
+.achievement-card {
+  background: #1f1f1f;
+  border-radius: 24px;
+  padding: 32px;
+  display: flex;
+  align-items: flex-start;
+  gap: 24px;
+  position: relative;
+  border: 2px solid transparent;
+  transition: all 0.3s ease;
+}
+
+.achievement-card.unlocked {
+  border-color: #00ff88;
+  background: linear-gradient(135deg, rgba(0, 255, 136, 0.1) 0%, rgba(0, 204, 106, 0.05) 100%);
+}
+
+.achievement-card.locked {
+  border-color: #333333;
+  opacity: 0.7;
+}
+
+/* 成就图标 */
+.achievement-icon {
+  font-size: 64px;
+  flex-shrink: 0;
+  width: 80px;
+  height: 80px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 255, 136, 0.1);
+  border-radius: 20px;
+}
+
+.achievement-icon.locked-icon {
+  background: rgba(255, 255, 255, 0.05);
+  filter: grayscale(100%);
+}
+
+/* 成就内容 */
+.achievement-content {
+  flex: 1;
+}
+
+.achievement-title {
+  font-size: 32px;
+  font-weight: bold;
+  color: #ffffff;
+  margin-bottom: 8px;
+}
+
+.achievement-description {
+  font-size: 26px;
+  color: #888888;
+  margin-bottom: 12px;
+  line-height: 1.4;
+}
+
+.achievement-reward {
+  font-size: 28px;
+  font-weight: bold;
+  color: #00ff88;
+  margin-bottom: 8px;
+}
+
+.achievement-card.locked .achievement-reward {
+  color: #666666;
+}
+
+.achievement-date {
+  font-size: 24px;
+  color: #666666;
+  margin-top: 8px;
+}
+
+/* 成就徽章 */
+.achievement-badge {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  width: 48px;
+  height: 48px;
+  background: #00ff88;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 28px;
+  color: #000000;
+  font-weight: bold;
+}
+
+.achievement-badge.claimed {
+  background: #00ff88;
+}
+
+/* 领取按钮 */
+.claim-button {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  background: #ff3b30 !important;
+  color: #ffffff !important;
+  font-size: 24px !important;
+  font-weight: bold;
+  border-radius: 12px;
+  border: none;
+  padding: 8px 24px !important;
+  min-width: 100px;
+}
+
+.claim-button:active {
+  opacity: 0.8;
+}
+
+/* 领取时间 */
+.achievement-claimed-date {
+  font-size: 22px;
+  color: #00ff88;
+  margin-top: 4px;
+}
+
+/* 进度条 */
+.progress-bar {
+  width: 100%;
+  height: 8px;
+  background: #2a2a2a;
+  border-radius: 4px;
+  overflow: hidden;
+  margin-top: 12px;
+}
+
+.progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #00ff88 0%, #00cc6a 100%);
+  border-radius: 4px;
+  transition: width 0.3s ease;
+}
+
+.progress-text {
+  font-size: 24px;
+  color: #666666;
+  margin-top: 8px;
+}
+
+/* 空状态 */
+.empty-state {
+  text-align: center;
+  padding: 120px 32px;
+}
+
+.empty-text {
+  font-size: 28px;
+  color: #666666;
+}

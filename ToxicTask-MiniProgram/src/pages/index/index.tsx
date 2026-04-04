@@ -3,17 +3,33 @@ import { View, Text, Button } from '@tarojs/components';
 import Taro from '@tarojs/taro';
 import { useAppStore } from '@/lib/stores/appStore';
 import { useTaskStore } from '@/lib/stores/taskStore';
+import { useAchievementStore } from '@/lib/stores/achievementStore';
 import { authApi } from '@/lib/auth';
 import './index.scss';
 
 export default function Index() {
   const { user, profile, setUser, initProfile, updateDignityCoins } = useAppStore();
   const { tasks, loading, fetchTasks, updateTaskStatus } = useTaskStore();
+  const { checkAndUnlockAchievements } = useAchievementStore();
   const [checking, setChecking] = useState(true);
 
   useEffect(() => {
     checkAuth();
   }, []);
+
+  // 定时刷新 profile（确保余额最新）
+  useEffect(() => {
+    if (!user) return;
+
+    const refreshProfile = () => {
+      initProfile(user.id);
+    };
+
+    // 每5秒刷新一次 profile
+    const profileTimer = setInterval(refreshProfile, 5000);
+
+    return () => clearInterval(profileTimer);
+  }, [user, initProfile]);
 
   // 定时检查过期任务
   useEffect(() => {
@@ -45,9 +61,13 @@ export default function Index() {
               created_at: new Date().toISOString(),
             };
 
+            console.log('[Index] 创建耻辱记录:', shameLog);
+
             const shameLogs = Taro.getStorageSync('toxictask_shame_logs') || [];
             shameLogs.unshift(shameLog);
             Taro.setStorageSync('toxictask_shame_logs', shameLogs);
+
+            console.log('[Index] 耻辱记录已保存，总数:', shameLogs.length);
 
             hasChanges = true;
           }
@@ -98,6 +118,65 @@ export default function Index() {
     Taro.navigateTo({ url: '/pages/tasks/create' });
   };
 
+  const handleCompleteTask = async (taskId: string, betAmount: number) => {
+    if (!user || !profile) return;
+
+    Taro.showModal({
+      title: '完成任务',
+      content: '确认已完成此任务？将返还押金。',
+      success: async (res) => {
+        if (res.confirm) {
+          try {
+            // 更新任务状态为已完成
+            await updateTaskStatus(taskId, 'completed');
+
+            // 返还押金
+            const newCoins = (profile.dignity_coins || 0) + betAmount;
+            updateDignityCoins(user.id, newCoins);
+
+            // 创建交易记录
+            const transaction = {
+              id: `trans_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+              user_id: user.id,
+              type: 'task_refund',
+              amount: betAmount,
+              balance_after: newCoins,
+              source_id: taskId,
+              description: '任务完成退款',
+              created_at: new Date().toISOString(),
+            };
+
+            const allTransactions = Taro.getStorageSync('toxictask_transactions') || {};
+            const userTransactions = allTransactions[user.id] || [];
+            userTransactions.unshift(transaction);
+            allTransactions[user.id] = userTransactions;
+            Taro.setStorageSync('toxictask_transactions', allTransactions);
+
+            Taro.showToast({
+              title: `任务完成！+${betAmount} 币`,
+              icon: 'success',
+            });
+
+            // 刷新任务列表
+            await fetchTasks(user.id);
+
+            // 检查并解锁成就
+            await checkAndUnlockAchievements(user.id);
+
+            // 重新加载 profile 以更新余额显示
+            initProfile(user.id);
+          } catch (error) {
+            console.error('[Index] 完成任务失败:', error);
+            Taro.showToast({
+              title: '操作失败',
+              icon: 'none',
+            });
+          }
+        }
+      },
+    });
+  };
+
   if (checking) {
     return (
       <View className='index-container'>
@@ -136,6 +215,15 @@ export default function Index() {
             <Text className='task-deadline'>
               截止: {new Date(task.deadline).toLocaleString('zh-CN')}
             </Text>
+            {task.status === 'pending' && (
+              <Button
+                className='complete-task-button'
+                size='mini'
+                onClick={() => handleCompleteTask(task.id, task.bet_amount)}
+              >
+                完成任务
+              </Button>
+            )}
           </View>
         ))}
       </View>

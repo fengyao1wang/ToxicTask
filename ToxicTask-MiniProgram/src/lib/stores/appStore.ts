@@ -22,7 +22,7 @@ interface AppState {
   initProfile: (userId: string) => void;
 
   // 更新尊严币
-  updateDignityCoins: (amount: number) => void;
+  updateDignityCoins: (userId: string, amount: number) => void;
 }
 
 const PROFILE_STORAGE_KEY = 'toxictask_profiles';
@@ -78,16 +78,16 @@ export const useAppStore = create<AppState>((set, get) => ({
     set({ profile });
   },
 
-  updateDignityCoins: (amount: number) => {
+  updateDignityCoins: (userId: string, amount: number) => {
     const state = get();
-    if (state.profile && state.user) {
+    if (state.profile) {
       const updatedProfile = {
         ...state.profile,
         dignity_coins: amount,
         updated_at: new Date().toISOString(),
       };
 
-      saveProfileToStorage(state.user.id, updatedProfile);
+      saveProfileToStorage(userId, updatedProfile);
       set({ profile: updatedProfile });
     }
   },
