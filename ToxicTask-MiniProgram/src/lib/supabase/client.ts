@@ -1,7 +1,8 @@
 import { createClient } from '@supabase/supabase-js';
 
-const supabaseUrl = process.env.TARO_APP_SUPABASE_URL || '';
-const supabaseAnonKey = process.env.TARO_APP_SUPABASE_ANON_KEY || '';
+// 小程序环境中直接使用配置值
+const supabaseUrl = 'https://jtgiggzizzipxhwgnavx.supabase.co';
+const supabaseAnonKey = 'sb_publishable_XAO3ZvtPxZ8ZdaZmsppkgA_4Pko-mrK';
 
 if (!supabaseUrl || !supabaseAnonKey) {
   console.error('[Supabase] 缺少环境变量配置');
