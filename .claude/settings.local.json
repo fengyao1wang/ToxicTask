@@ -34,7 +34,9 @@
       "Bash(python generate-icons.py)",
       "Bash(ls:*)",
       "Bash(rm:*)",
-      "Bash(xargs grep:*)"
+      "Bash(xargs grep:*)",
+      "Bash(pkill -f \"taro build\")",
+      "Bash(grep -r \"ERROR\\\\|error\\\\|Error\" dist/*.log)"
     ]
   }
 }

@@ -82,7 +82,7 @@ const PRESET_ACHIEVEMENTS: Achievement[] = [
     id: 'achievement_wealth_dispenser',
     type: 'wealth_dispenser',
     title: '散财童子',
-    description: '。',
+    description: '致力于撒币',
     icon: '💰',
     coins_reward: 15,
     condition: { target: 3 },

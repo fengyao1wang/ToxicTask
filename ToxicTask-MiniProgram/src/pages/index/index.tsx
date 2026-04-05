@@ -42,7 +42,10 @@ export default function Index() {
     if (!user) return;
 
     const checkExpiredTasks = async () => {
-      const now = new Date().getTime();
+      // 使用调试日期或当前时间
+      const currentTime = debugDate
+        ? new Date(debugDate + 'T23:59:59').getTime()
+        : new Date().getTime();
       const today = debugDate || new Date().toISOString().split('T')[0];
       let hasChanges = false;
 
@@ -56,7 +59,7 @@ export default function Index() {
               return checkIn.date < today && !checkIn.checked;
             });
 
-            if (hasMissedCheckIn || now > deadline) {
+            if (hasMissedCheckIn || currentTime > deadline) {
               // 任务失败
               await updateTaskStatus(task.id, 'failed');
 
@@ -85,7 +88,7 @@ export default function Index() {
 
               hasChanges = true;
             }
-          } else if (task.task_type === 'single' && now > deadline) {
+          } else if (task.task_type === 'single' && currentTime > deadline) {
             // 单次任务过期
             await updateTaskStatus(task.id, 'failed');
 
