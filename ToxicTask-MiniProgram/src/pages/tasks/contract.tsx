@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { View, Text, Button, Slider, Switch } from '@tarojs/components';
-import Taro, { useRouter } from '@tarojs/taro';
+import Taro, { useRouter, useShareAppMessage } from '@tarojs/taro';
 import { useAppStore } from '@/lib/stores/appStore';
 import { useTaskStore } from '@/lib/stores/taskStore';
 import './contract.scss';
@@ -23,6 +23,7 @@ export default function SocialContractSetup() {
   const [bountyCoins, setBountyCoins] = useState(10);
   const [visibility, setVisibility] = useState<'friends' | 'public'>('friends');
   const [loading, setLoading] = useState(false);
+  const [createdTaskId, setCreatedTaskId] = useState<string>('');
 
   useEffect(() => {
     const params = router.params;
@@ -33,6 +34,33 @@ export default function SocialContractSetup() {
     if (params.hours) setHours(parseInt(params.hours));
     if (params.minutes) setMinutes(parseInt(params.minutes));
   }, [router.params]);
+
+  // 分享配置
+  useShareAppMessage(() => {
+    if (!createdTaskId || !user) {
+      return {
+        title: '来ToxicTask一起自律打卡吧！',
+        path: '/pages/index/index',
+      };
+    }
+
+    // 动态生成挑衅文案
+    const provocationTexts = [
+      `我不信我做不到"${title}"，敢不敢来拿走我的${bountyCoins}个尊严币？`,
+      `${bountyCoins}币赏金等你来拿！我就不信完不成"${title}"`,
+      `敢来监督我吗？完不成"${title}"就给你${bountyCoins}币！`,
+      `${title} - 我押${betAmount}币，你敢来当监督吗？`,
+      `挑战"${title}"，失败了${bountyCoins}币归你！`,
+    ];
+
+    const randomText = provocationTexts[Math.floor(Math.random() * provocationTexts.length)];
+
+    return {
+      title: randomText,
+      path: `/pages/tasks/detail?taskId=${createdTaskId}&inviterId=${user.id}&action=supervise`,
+      imageUrl: '', // 使用默认截屏
+    };
+  });
 
   const bountyOptions = [5, 10, 20, 30, 50];
 
@@ -165,6 +193,9 @@ export default function SocialContractSetup() {
 
       if (newTask) {
         updateDignityCoins(user.id, profile.dignity_coins - totalCost);
+
+        // 保存任务ID用于分享
+        setCreatedTaskId(newTask.id);
 
         const { useAchievementStore } = await import('@/lib/stores/achievementStore');
         await useAchievementStore.getState().checkAndUnlockAchievements(user.id);
