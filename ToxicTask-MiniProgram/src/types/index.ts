@@ -10,6 +10,15 @@ export interface Profile {
 export type TaskStatus = 'pending' | 'completed' | 'failed';
 export type TaskType = 'single' | 'repeat'; // 单次任务 | 重复任务
 
+// 好友监督状态
+export type SupervisionStatus =
+  | 'none'                // 未开启监督
+  | 'waiting_invite'      // 等待邀请好友
+  | 'invited'             // 已邀请好友
+  | 'evidence_submitted'  // 已提交证据
+  | 'approved'            // 证据通过
+  | 'rejected';           // 证据被拒绝
+
 export interface Task {
   id: string;
   user_id: string;
@@ -24,6 +33,15 @@ export interface Task {
   task_type: TaskType; // 任务类型（默认为 'single'）
   repeat_days?: number; // 重复天数（如7天）
   check_ins?: CheckIn[]; // 打卡记录
+
+  // 好友监督相关字段
+  is_supervised: boolean; // 是否开启好友监督
+  supervisor_id?: string | null; // 监督者的 User ID
+  bounty_coins: number; // 监督赏金（默认为0）
+  evidence_image?: string | null; // 证据图片的 URL
+  evidence_text?: string | null; // 证据文字描述
+  supervision_status: SupervisionStatus; // 监督状态
+  evidence_submitted_at?: string; // 证据提交时间（用于超时判断）
 }
 
 // 打卡记录
@@ -71,7 +89,11 @@ export type AchievementType =
   // 状态与社交类
   | 'wall_resident'        // 耻辱墙钉子户：自然周7天内5天有失败
   | 'situp_champion'       // 仰卧起坐选手：连续3天完成+连续3天失败
-  | 'flag_collector';      // Flag收藏家：同时5个进行中任务
+  | 'flag_collector'       // Flag收藏家：同时5个进行中任务
+  // 好友监督类
+  | 'righteous_betrayer'   // 大义灭亲：作为监督者，累计拒绝好友任务达到3次
+  | 'cover_up_master'      // 包庇狂魔：作为监督者，连续通过好友任务5次
+  | 'bad_friend_picker';   // 交友不慎：作为发起者，因被好友拒绝而导致破产
 
 export interface AchievementCondition {
   target: number; // 目标值（如连续3天、累计10个）
@@ -161,7 +183,10 @@ export type TransactionType =
   | 'achievement'     // 成就奖励（收入）
   | 'invite'          // 邀请奖励（收入）
   | 'ad_watch'        // 观看广告（收入）
-  | 'recharge';       // 充值（收入）
+  | 'recharge'        // 充值（收入）
+  | 'bounty_freeze'   // 冻结赏金（支出）
+  | 'bounty_reward'   // 监督者获得赏金+分红（收入）
+  | 'bounty_refund';  // 监督者超时退回赏金（收入）
 
 export interface CoinTransaction {
   id: string;

@@ -172,6 +172,11 @@
   margin-top: 8px;
 }
 
+.complete-task-button.supervised {
+  background-color: #5ac8fa !important;
+  color: #000 !important;
+}
+
 .complete-task-button:active {
   opacity: 0.8;
 }
@@ -264,6 +269,29 @@
   color: #00ff88;
   text-align: center;
   display: block;
+}
+
+/* 监督状态信息 */
+.supervision-info {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 12px;
+  background-color: rgba(90, 200, 250, 0.1);
+  border: 1px solid #5ac8fa;
+  border-radius: 6px;
+  margin-bottom: 12px;
+}
+
+.supervision-label {
+  font-size: 13px;
+  color: #5ac8fa;
+  font-weight: bold;
+}
+
+.supervision-status {
+  font-size: 12px;
+  color: #5ac8fa;
 }
 
 .create-button {

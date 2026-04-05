@@ -3,6 +3,7 @@ export default defineAppConfig({
     'pages/index/index',
     'pages/auth/index',
     'pages/tasks/create',
+    'pages/tasks/detail',
     'pages/shame/index',
     'pages/profile/index',
     'pages/checkin/index',

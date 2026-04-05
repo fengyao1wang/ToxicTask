@@ -279,3 +279,127 @@
   line-height: 1.5;
   display: block;
 }
+
+/* 好友监督样式 */
+.supervision-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+}
+
+.supervision-content {
+  padding: 15px;
+  background-color: #1a1a1a;
+  border-radius: 8px;
+  border: 1px solid #333;
+}
+
+.supervision-desc {
+  display: block;
+  font-size: 14px;
+  color: #999;
+  line-height: 1.5;
+  margin-bottom: 15px;
+}
+
+.bounty-section {
+  margin-bottom: 15px;
+}
+
+.bounty-label {
+  display: block;
+  font-size: 14px;
+  color: #999;
+  margin-bottom: 10px;
+}
+
+.bounty-options {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.bounty-option {
+  flex: 1;
+  height: 40px;
+  background-color: #2a2a2a;
+  border: 1px solid #444;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.bounty-option.active {
+  background-color: #ff3b30;
+  border-color: #ff3b30;
+}
+
+.bounty-text {
+  color: #fff;
+  font-size: 14px;
+  font-weight: bold;
+}
+
+.bounty-slider {
+  width: 100%;
+  margin-bottom: 5px;
+}
+
+.bounty-value {
+  display: block;
+  text-align: center;
+  font-size: 16px;
+  color: #ff3b30;
+  font-weight: bold;
+}
+
+.supervision-rules {
+  padding: 12px;
+  background-color: #2a2a2a;
+  border-radius: 6px;
+  margin-bottom: 15px;
+}
+
+.rules-title {
+  display: block;
+  font-size: 14px;
+  color: #00ff88;
+  font-weight: bold;
+  margin-bottom: 8px;
+}
+
+.rules-item {
+  display: block;
+  font-size: 13px;
+  color: #999;
+  line-height: 1.8;
+}
+
+.total-cost {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 12px;
+  background-color: #2a2a2a;
+  border-radius: 6px;
+  gap: 8px;
+}
+
+.cost-label {
+  font-size: 14px;
+  color: #999;
+}
+
+.cost-value {
+  font-size: 20px;
+  color: #ff3b30;
+  font-weight: bold;
+}
+
+.cost-detail {
+  font-size: 12px;
+  color: #666;
+}

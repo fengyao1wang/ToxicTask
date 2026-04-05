@@ -154,6 +154,9 @@ const getDefaultDescription = (type: TransactionType): string => {
     invite: '邀请奖励',
     ad_watch: '观看广告',
     recharge: '充值',
+    bounty_freeze: '冻结监督赏金',
+    bounty_reward: '监督奖励',
+    bounty_refund: '赏金退回',
   };
   return descriptions[type] || '未知交易';
 };

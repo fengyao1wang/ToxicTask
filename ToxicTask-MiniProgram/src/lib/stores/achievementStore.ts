@@ -143,6 +143,35 @@ const PRESET_ACHIEVEMENTS: Achievement[] = [
     coins_reward: 10,
     condition: { target: 5 },
   },
+
+  // 4. 好友监督类
+  {
+    id: 'achievement_righteous_betrayer',
+    type: 'righteous_betrayer',
+    title: '大义灭亲',
+    description: '作为监督者，累计拒绝好友任务达到3次',
+    icon: '⚔️',
+    coins_reward: 20,
+    condition: { target: 3 },
+  },
+  {
+    id: 'achievement_cover_up_master',
+    type: 'cover_up_master',
+    title: '包庇狂魔',
+    description: '作为监督者，连续通过好友任务5次',
+    icon: '🤝',
+    coins_reward: 10,
+    condition: { target: 5 },
+  },
+  {
+    id: 'achievement_bad_friend_picker',
+    type: 'bad_friend_picker',
+    title: '交友不慎',
+    description: '作为发起者，因被好友拒绝而导致破产',
+    icon: '💔',
+    coins_reward: 15,
+    condition: { target: 1 },
+  },
 ];
 
 // 初始化成就列表到本地存储
@@ -479,6 +508,19 @@ const calculateAchievementProgress = (userId: string, achievement: Achievement):
       // Flag收藏家：同时存在5个及以上进行中的任务
       return checkFlagCollector(tasks);
 
+    // 4. 好友监督类
+    case 'righteous_betrayer':
+      // 大义灭亲：作为监督者，累计拒绝好友任务达到3次
+      return checkRighteousBetrayerProgress(userId, tasks);
+
+    case 'cover_up_master':
+      // 包庇狂魔：作为监督者，连续通过好友任务5次
+      return checkCoverUpMasterProgress(userId, tasks);
+
+    case 'bad_friend_picker':
+      // 交友不慎：作为发起者，因被好友拒绝而导致破产
+      return checkBadFriendPicker(userId, tasks) ? 1 : 0;
+
     default:
       return 0;
   }
@@ -701,4 +743,77 @@ const checkSitupChampion = (tasks: any[]): boolean => {
 const checkFlagCollector = (tasks: any[]): number => {
   const pendingTasks = tasks.filter((task) => task.status === 'pending');
   return pendingTasks.length;
+};
+
+// ==================== 好友监督类检测函数 ====================
+
+// 大义灭亲：作为监督者，累计拒绝好友任务达到3次
+const checkRighteousBetrayerProgress = (userId: string, tasks: any[]): number => {
+  const rejectedCount = tasks.filter(
+    (task) =>
+      task.supervisor_id === userId &&
+      task.supervision_status === 'rejected'
+  ).length;
+  return rejectedCount;
+};
+
+// 包庇狂魔：作为监督者，连续通过好友任务5次
+const checkCoverUpMasterProgress = (userId: string, tasks: any[]): number => {
+  // 获取该用户作为监督者的所有已审核任务
+  const supervisedTasks = tasks
+    .filter((task) => task.supervisor_id === userId &&
+            (task.supervision_status === 'approved' || task.supervision_status === 'rejected'))
+    .sort((a, b) => new Date(a.updated_at).getTime() - new Date(b.updated_at).getTime());
+
+  if (supervisedTasks.length < 5) return 0;
+
+  // 查找连续5次通过的模式
+  let maxConsecutive = 0;
+  let currentConsecutive = 0;
+
+  for (const task of supervisedTasks) {
+    if (task.supervision_status === 'approved') {
+      currentConsecutive++;
+      maxConsecutive = Math.max(maxConsecutive, currentConsecutive);
+    } else {
+      currentConsecutive = 0;
+    }
+  }
+
+  return maxConsecutive;
+};
+
+// 交友不慎：作为发起者，因被好友拒绝而导致破产
+const checkBadFriendPicker = (userId: string, tasks: any[]): boolean => {
+  // 查找被拒绝的监督任务
+  const rejectedSupervisedTasks = tasks.filter(
+    (task) =>
+      task.user_id === userId &&
+      task.is_supervised &&
+      task.supervision_status === 'rejected'
+  );
+
+  if (rejectedSupervisedTasks.length === 0) return false;
+
+  // 检查是否有任务被拒绝后导致破产（余额归零）
+  try {
+    const transactions = Taro.getStorageSync(STORAGE_KEYS.TRANSACTIONS) || {};
+    const userTransactions = transactions[userId] || [];
+
+    for (const task of rejectedSupervisedTasks) {
+      // 查找该任务相关的交易记录
+      const taskTransactions = userTransactions.filter(
+        (t) => t.source_id === task.id
+      );
+
+      // 检查是否有交易后余额为0的情况
+      if (taskTransactions.some((t) => t.balance_after === 0)) {
+        return true;
+      }
+    }
+  } catch (error) {
+    console.error('[Achievement][Error] 检查交友不慎失败:', error);
+  }
+
+  return false;
 };

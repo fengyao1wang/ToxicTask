@@ -9,7 +9,7 @@ import './index.scss';
 
 export default function Index() {
   const { user, profile, setUser, initProfile, updateDignityCoins } = useAppStore();
-  const { tasks, loading, fetchTasks, updateTaskStatus, checkInTask } = useTaskStore();
+  const { tasks, loading, fetchTasks, updateTaskStatus, checkInTask, checkSupervisionTimeout } = useTaskStore();
   const { checkAndUnlockAchievements } = useAchievementStore();
   const [checking, setChecking] = useState(true);
   const [debugDate, setDebugDate] = useState<string | null>(null); // 调试用的模拟日期
@@ -131,11 +131,21 @@ export default function Index() {
       }
     };
 
+    // 检查监督超时
+    const checkSupervisionTimeouts = async () => {
+      if (!user) return;
+      await checkSupervisionTimeout(user.id);
+    };
+
     // 立即检查一次
     checkExpiredTasks();
+    checkSupervisionTimeouts();
 
     // 每10秒检查一次
-    const timer = setInterval(checkExpiredTasks, 10000);
+    const timer = setInterval(() => {
+      checkExpiredTasks();
+      checkSupervisionTimeouts();
+    }, 10000);
 
     return () => clearInterval(timer);
   }, [user, tasks, profile, debugDate]);
@@ -369,6 +379,20 @@ export default function Index() {
                 截止: {new Date(task.deadline).toLocaleString('zh-CN')}
               </Text>
 
+              {/* 监督状态显示 */}
+              {task.is_supervised && (
+                <View className='supervision-info'>
+                  <Text className='supervision-label'>🔍 好友监督</Text>
+                  <Text className='supervision-status'>
+                    {task.supervision_status === 'waiting_invite' && '等待邀请'}
+                    {task.supervision_status === 'invited' && '已邀请'}
+                    {task.supervision_status === 'evidence_submitted' && '待审核'}
+                    {task.supervision_status === 'approved' && '已通过'}
+                    {task.supervision_status === 'rejected' && '已拒绝'}
+                  </Text>
+                </View>
+              )}
+
               {/* 重复任务显示打卡进度 */}
               {task.task_type === 'repeat' && task.check_ins && (
                 <View className='check-in-progress'>
@@ -393,13 +417,29 @@ export default function Index() {
               {task.status === 'pending' && (
                 <>
                   {task.task_type === 'single' ? (
-                    <Button
-                      className='complete-task-button'
-                      size='mini'
-                      onClick={() => handleCompleteTask(task.id, task.bet_amount)}
-                    >
-                      完成任务
-                    </Button>
+                    task.is_supervised ? (
+                      // 开启监督的任务，跳转到详情页
+                      <Button
+                        className='complete-task-button supervised'
+                        size='mini'
+                        onClick={() => {
+                          Taro.navigateTo({
+                            url: `/pages/tasks/detail?taskId=${task.id}`,
+                          });
+                        }}
+                      >
+                        查看详情
+                      </Button>
+                    ) : (
+                      // 普通任务，直接完成
+                      <Button
+                        className='complete-task-button'
+                        size='mini'
+                        onClick={() => handleCompleteTask(task.id, task.bet_amount)}
+                      >
+                        完成任务
+                      </Button>
+                    )
                   ) : canCheckInToday ? (
                     <Button
                       className='checkin-button'
