@@ -51,6 +51,10 @@ export default function Profile() {
     Taro.navigateTo({ url: '/pages/achievements/index' });
   };
 
+  const handleNavigateToSocial = () => {
+    Taro.navigateTo({ url: '/pages/social/index' });
+  };
+
   return (
     <View className='profile-container'>
       <View className='profile-header'>
@@ -82,14 +86,14 @@ export default function Profile() {
             <Text className='earn-coin-title'>成就系统</Text>
             <Text className='earn-coin-reward'>查看成就</Text>
           </View>
+          <View className='earn-coin-card' onClick={handleNavigateToSocial}>
+            <Text className='earn-coin-icon'>🤝</Text>
+            <Text className='earn-coin-title'>社交互动</Text>
+            <Text className='earn-coin-reward'>监督好友</Text>
+          </View>
           <View className='earn-coin-card disabled'>
             <Text className='earn-coin-icon'>👥</Text>
             <Text className='earn-coin-title'>邀请好友</Text>
-            <Text className='earn-coin-reward'>敬请期待</Text>
-          </View>
-          <View className='earn-coin-card disabled'>
-            <Text className='earn-coin-icon'>📺</Text>
-            <Text className='earn-coin-title'>观看广告</Text>
             <Text className='earn-coin-reward'>敬请期待</Text>
           </View>
         </View>

@@ -1,0 +1,259 @@
+.contract-container {
+  min-height: 100vh;
+  background-color: #0a0a0a;
+  padding: 20px;
+}
+
+/* 任务信息回顾 */
+.task-summary {
+  background-color: #1a1a1a;
+  border: 1px solid #333;
+  border-radius: 12px;
+  padding: 16px;
+  margin-bottom: 20px;
+}
+
+.summary-title {
+  font-size: 16px;
+  font-weight: bold;
+  color: #fff;
+  display: block;
+  margin-bottom: 12px;
+}
+
+.summary-item {
+  display: flex;
+  margin-bottom: 8px;
+}
+
+.item-label {
+  font-size: 14px;
+  color: #999;
+  width: 60px;
+}
+
+.item-value {
+  font-size: 14px;
+  color: #fff;
+  flex: 1;
+}
+
+/* 监督开关 */
+.supervision-toggle {
+  background-color: #1a1a1a;
+  border: 1px solid #333;
+  border-radius: 12px;
+  padding: 16px;
+  margin-bottom: 20px;
+}
+
+.toggle-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.toggle-title {
+  font-size: 16px;
+  font-weight: bold;
+  color: #fff;
+}
+
+.toggle-desc {
+  font-size: 13px;
+  color: #999;
+  display: block;
+}
+
+/* 红黑警示区 */
+.danger-zone {
+  background: linear-gradient(135deg, #1a0000 0%, #330000 100%);
+  border: 2px solid #ff3b30;
+  border-radius: 12px;
+  padding: 20px;
+  margin-bottom: 20px;
+  box-shadow: 0 0 20px rgba(255, 59, 48, 0.3);
+}
+
+.danger-title {
+  font-size: 18px;
+  font-weight: bold;
+  color: #ff3b30;
+  display: block;
+  margin-bottom: 12px;
+  text-align: center;
+}
+
+.danger-text {
+  font-size: 14px;
+  color: #ff6b6b;
+  line-height: 1.6;
+  display: block;
+  text-align: center;
+}
+
+/* 赏金设置 */
+.bounty-section {
+  background-color: #1a1a1a;
+  border: 1px solid #333;
+  border-radius: 12px;
+  padding: 16px;
+  margin-bottom: 20px;
+}
+
+.section-title {
+  font-size: 16px;
+  font-weight: bold;
+  color: #fff;
+  display: block;
+  margin-bottom: 12px;
+}
+
+.bounty-options {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.bounty-option {
+  flex: 1;
+  height: 40px;
+  background-color: #2a2a2a;
+  border: 2px solid #444;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.bounty-option.active {
+  background-color: #ff3b30;
+  border-color: #ff3b30;
+}
+
+.bounty-text {
+  font-size: 14px;
+  font-weight: bold;
+  color: #fff;
+}
+
+.bounty-slider {
+  margin: 16px 0;
+}
+
+.bounty-value {
+  font-size: 16px;
+  font-weight: bold;
+  color: #ff3b30;
+  text-align: center;
+  display: block;
+}
+
+/* 可见度设置 */
+.visibility-section {
+  background-color: #1a1a1a;
+  border: 1px solid #333;
+  border-radius: 12px;
+  padding: 16px;
+  margin-bottom: 20px;
+}
+
+.visibility-options {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+
+.visibility-option {
+  flex: 1;
+  height: 44px;
+  background-color: #2a2a2a;
+  border: 2px solid #444;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.visibility-option.active {
+  background-color: rgba(255, 59, 48, 0.2);
+  border-color: #ff3b30;
+}
+
+.option-text {
+  font-size: 14px;
+  font-weight: bold;
+  color: #fff;
+}
+
+.visibility-hint {
+  font-size: 12px;
+  color: #999;
+  display: block;
+  text-align: center;
+}
+
+/* 总花费 */
+.total-cost {
+  background-color: rgba(255, 59, 48, 0.1);
+  border: 1px solid #ff3b30;
+  border-radius: 8px;
+  padding: 12px;
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.cost-label {
+  font-size: 14px;
+  color: #fff;
+  margin-right: 8px;
+}
+
+.cost-value {
+  font-size: 20px;
+  font-weight: bold;
+  color: #ff3b30;
+  margin-right: 8px;
+}
+
+.cost-detail {
+  font-size: 12px;
+  color: #999;
+}
+
+/* 按钮 */
+.invite-button {
+  width: 100%;
+  height: 50px;
+  background-color: #ff3b30 !important;
+  color: #fff !important;
+  font-size: 16px !important;
+  font-weight: bold;
+  border-radius: 8px;
+  border: none;
+  margin-bottom: 12px;
+}
+
+.invite-button:active {
+  opacity: 0.8;
+}
+
+.direct-button {
+  width: 100%;
+  height: 44px;
+  background-color: #333 !important;
+  color: #fff !important;
+  font-size: 14px !important;
+  border-radius: 8px;
+  border: none;
+}
+
+.direct-button:active {
+  opacity: 0.8;
+}

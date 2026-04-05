@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import { Profile } from '@/types';
+import { Profile, ShameLog } from '@/types';
 import Taro from '@tarojs/taro';
 
 interface User {
@@ -23,9 +23,19 @@ interface AppState {
 
   // 更新尊严币
   updateDignityCoins: (userId: string, amount: number) => void;
+
+  // 耻辱墙相关
+  createShameLog: (taskId: string, userId: string, taskTitle: string, betAmount: number, visibility?: 'private' | 'friends' | 'public', supervisorComment?: string) => Promise<void>;
+  getShameLogsByVisibility: (visibility: 'friends' | 'public') => ShameLog[];
 }
 
 const PROFILE_STORAGE_KEY = 'toxictask_profiles';
+const SHAME_LOGS_STORAGE_KEY = 'toxictask_shame_logs';
+
+// 生成唯一 ID
+const generateId = () => {
+  return `shame_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+};
 
 // 从本地存储加载 profile
 const loadProfileFromStorage = (userId: string): Profile | null => {
@@ -89,6 +99,43 @@ export const useAppStore = create<AppState>((set, get) => ({
 
       saveProfileToStorage(userId, updatedProfile);
       set({ profile: updatedProfile });
+    }
+  },
+
+  // 创建耻辱记录
+  createShameLog: async (taskId: string, userId: string, taskTitle: string, betAmount: number, visibility: 'private' | 'friends' | 'public' = 'friends', supervisorComment?: string) => {
+    try {
+      const newShameLog: ShameLog = {
+        id: generateId(),
+        task_id: taskId,
+        user_id: userId,
+        task_title: taskTitle,
+        bet_amount: betAmount,
+        ai_comment: '你又失败了，真是让人失望。', // 默认嘲讽（后续接入AI）
+        created_at: new Date().toISOString(),
+        visibility: visibility,
+        supervisor_comment: supervisorComment || null,
+      };
+
+      // 保存到本地存储
+      const allShameLogs = Taro.getStorageSync(SHAME_LOGS_STORAGE_KEY) || [];
+      allShameLogs.unshift(newShameLog);
+      Taro.setStorageSync(SHAME_LOGS_STORAGE_KEY, allShameLogs);
+
+      console.log('[AppStore] 耻辱记录已创建:', newShameLog);
+    } catch (error) {
+      console.error('[AppStore] 创建耻辱记录失败:', error);
+    }
+  },
+
+  // 根据可见度获取耻辱记录
+  getShameLogsByVisibility: (visibility: 'friends' | 'public') => {
+    try {
+      const allShameLogs: ShameLog[] = Taro.getStorageSync(SHAME_LOGS_STORAGE_KEY) || [];
+      return allShameLogs.filter((log) => log.visibility === visibility);
+    } catch (error) {
+      console.error('[AppStore] 获取耻辱记录失败:', error);
+      return [];
     }
   },
 }));

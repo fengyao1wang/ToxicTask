@@ -42,6 +42,8 @@ export interface Task {
   evidence_text?: string | null; // 证据文字描述
   supervision_status: SupervisionStatus; // 监督状态
   evidence_submitted_at?: string; // 证据提交时间（用于超时判断）
+  supervisor_comment?: string | null; // 监督者的评论（嘲讽/鼓励）
+  visibility: 'private' | 'friends' | 'public'; // 失败记录可见度（默认 'friends'）
 }
 
 // 打卡记录
@@ -59,6 +61,8 @@ export interface ShameLog {
   bet_amount: number;
   ai_comment: string;
   created_at: string;
+  visibility: 'private' | 'friends' | 'public'; // 可见度
+  supervisor_comment?: string | null; // 监督者评论
 }
 
 // ==================== 尊严币获取系统类型定义 ====================

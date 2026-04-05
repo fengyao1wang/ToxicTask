@@ -89,6 +89,7 @@ export const useTaskStore = create<TaskState>((set, get) => ({
         is_supervised: task.is_supervised ?? false,
         bounty_coins: task.bounty_coins ?? 0,
         supervision_status: task.is_supervised ? 'waiting_invite' : 'none',
+        visibility: task.visibility || 'friends', // 默认好友可见
       };
 
       const userId = task.user_id;
@@ -402,7 +403,14 @@ export const useTaskStore = create<TaskState>((set, get) => ({
         // 创建耻辱记录
         const { useAppStore } = await import('./appStore');
         const appStore = useAppStore.getState();
-        await appStore.createShameLog(taskId, task.user_id, task.title, task.bet_amount);
+        await appStore.createShameLog(
+          taskId,
+          task.user_id,
+          task.title,
+          task.bet_amount,
+          task.visibility || 'friends',
+          task.supervisor_comment || undefined
+        );
 
         console.log('[TaskStore][Info] 证据被拒，任务失败');
       }

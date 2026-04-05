@@ -1,0 +1,356 @@
+.social-container {
+  min-height: 100vh;
+  background-color: #0a0a0a;
+  padding-bottom: 80px;
+}
+
+/* Tab切换栏 */
+.tab-bar {
+  display: flex;
+  background-color: #1a1a1a;
+  border-bottom: 1px solid #333;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.tab-item {
+  flex: 1;
+  height: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  cursor: pointer;
+}
+
+.tab-item.active {
+  border-bottom: 3px solid #ff3b30;
+}
+
+.tab-text {
+  font-size: 16px;
+  color: #999;
+}
+
+.tab-item.active .tab-text {
+  color: #ff3b30;
+  font-weight: bold;
+}
+
+.badge {
+  position: absolute;
+  top: 8px;
+  right: 20px;
+  background-color: #ff3b30;
+  border-radius: 10px;
+  min-width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 6px;
+}
+
+.badge-text {
+  font-size: 12px;
+  color: #fff;
+  font-weight: bold;
+}
+
+/* 内容区域 */
+.content-section {
+  padding: 20px;
+}
+
+/* 空状态 */
+.empty-state {
+  text-align: center;
+  margin-top: 80px;
+}
+
+.empty-text {
+  font-size: 18px;
+  color: #666;
+  display: block;
+  margin-bottom: 10px;
+}
+
+.empty-hint {
+  font-size: 14px;
+  color: #444;
+  display: block;
+}
+
+/* 任务列表 */
+.task-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* 审核卡片 */
+.review-card {
+  background-color: #1a1a1a;
+  border: 2px solid #ff3b30;
+  border-radius: 12px;
+  padding: 16px;
+  box-shadow: 0 0 15px rgba(255, 59, 48, 0.2);
+}
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.task-title {
+  font-size: 18px;
+  font-weight: bold;
+  color: #fff;
+  flex: 1;
+}
+
+.task-bet {
+  font-size: 16px;
+  font-weight: bold;
+  color: #ff3b30;
+  margin-left: 12px;
+}
+
+/* 证据展示 */
+.evidence-section {
+  margin-bottom: 16px;
+}
+
+.evidence-label {
+  font-size: 13px;
+  color: #999;
+  display: block;
+  margin-bottom: 8px;
+}
+
+.evidence-image {
+  width: 100%;
+  max-height: 300px;
+  border-radius: 8px;
+  background-color: #2a2a2a;
+}
+
+.evidence-text {
+  font-size: 14px;
+  color: #fff;
+  line-height: 1.6;
+  display: block;
+  padding: 12px;
+  background-color: #2a2a2a;
+  border-radius: 8px;
+}
+
+/* 审核按钮 */
+.review-actions {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.reject-btn {
+  flex: 1;
+  height: 44px;
+  background-color: #333 !important;
+  color: #fff !important;
+  font-size: 15px !important;
+  font-weight: bold;
+  border-radius: 8px;
+  border: 2px solid #666;
+}
+
+.reject-btn:active {
+  background-color: #444 !important;
+}
+
+.approve-btn {
+  flex: 1;
+  height: 44px;
+  background-color: #00ff88 !important;
+  color: #000 !important;
+  font-size: 15px !important;
+  font-weight: bold;
+  border-radius: 8px;
+  border: none;
+}
+
+.approve-btn:active {
+  opacity: 0.8;
+}
+
+/* 奖励提示 */
+.reward-hint {
+  padding: 8px;
+  background-color: rgba(255, 59, 48, 0.1);
+  border-radius: 6px;
+  text-align: center;
+}
+
+.hint-text {
+  font-size: 12px;
+  color: #ff6b6b;
+}
+
+/* 契约卡片 */
+.contract-card {
+  background-color: #1a1a1a;
+  border: 1px solid #333;
+  border-radius: 12px;
+  padding: 16px;
+  cursor: pointer;
+}
+
+.contract-card:active {
+  background-color: #222;
+}
+
+.status-badge {
+  padding: 4px 12px;
+  border-radius: 12px;
+  margin-left: 12px;
+}
+
+.status-badge.status-success {
+  background-color: rgba(0, 255, 136, 0.2);
+  border: 1px solid #00ff88;
+}
+
+.status-badge.status-failed {
+  background-color: rgba(255, 59, 48, 0.2);
+  border: 1px solid #ff3b30;
+}
+
+.status-badge.status-pending {
+  background-color: rgba(255, 149, 0, 0.2);
+  border: 1px solid #ff9500;
+}
+
+.status-badge.status-normal {
+  background-color: rgba(102, 102, 102, 0.2);
+  border: 1px solid #666;
+}
+
+.status-text {
+  font-size: 12px;
+  font-weight: bold;
+  color: #fff;
+}
+
+.card-info {
+  display: flex;
+  gap: 16px;
+  margin-bottom: 12px;
+}
+
+.info-item {
+  font-size: 14px;
+  color: #999;
+}
+
+/* 监督者评论 */
+.supervisor-comment {
+  padding: 12px;
+  background-color: rgba(255, 59, 48, 0.1);
+  border-left: 3px solid #ff3b30;
+  border-radius: 6px;
+  margin-bottom: 12px;
+}
+
+.comment-label {
+  font-size: 12px;
+  color: #ff6b6b;
+  display: block;
+  margin-bottom: 6px;
+}
+
+.comment-text {
+  font-size: 14px;
+  color: #fff;
+  line-height: 1.5;
+  display: block;
+}
+
+.card-footer {
+  text-align: right;
+}
+
+.footer-hint {
+  font-size: 13px;
+  color: #666;
+}
+
+/* 评论弹窗 */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.modal-content {
+  width: 80%;
+  background-color: #1a1a1a;
+  border: 2px solid #ff3b30;
+  border-radius: 12px;
+  padding: 20px;
+}
+
+.modal-title {
+  font-size: 18px;
+  font-weight: bold;
+  color: #fff;
+  display: block;
+  margin-bottom: 16px;
+  text-align: center;
+}
+
+.comment-textarea {
+  width: 100%;
+  min-height: 100px;
+  background-color: #2a2a2a;
+  border: 1px solid #444;
+  border-radius: 8px;
+  padding: 12px;
+  font-size: 14px;
+  color: #fff;
+  margin-bottom: 16px;
+}
+
+.modal-actions {
+  display: flex;
+  gap: 12px;
+}
+
+.cancel-btn {
+  flex: 1;
+  height: 44px;
+  background-color: #333 !important;
+  color: #fff !important;
+  font-size: 15px !important;
+  border-radius: 8px;
+  border: none;
+}
+
+.confirm-btn {
+  flex: 1;
+  height: 44px;
+  background-color: #ff3b30 !important;
+  color: #fff !important;
+  font-size: 15px !important;
+  font-weight: bold;
+  border-radius: 8px;
+  border: none;
+}

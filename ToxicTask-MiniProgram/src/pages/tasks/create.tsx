@@ -17,8 +17,6 @@ export default function CreateTask() {
   const [taskType, setTaskType] = useState<'single' | 'repeat'>('single');
   const [repeatDays, setRepeatDays] = useState(7);
   const [customDaysInput, setCustomDaysInput] = useState('7');
-  const [isSupervised, setIsSupervised] = useState(false);
-  const [bountyCoins, setBountyCoins] = useState(10);
 
   const betOptions = [5, 10, 20, 30, 50];
 
@@ -71,8 +69,7 @@ export default function CreateTask() {
     }
 
     // 检查余额是否足够
-    const totalCost = isSupervised ? betAmount + bountyCoins : betAmount;
-    if (profile.dignity_coins < totalCost) {
+    if (profile.dignity_coins < betAmount) {
       Taro.showToast({
         title: '尊严币余额不足',
         icon: 'none',
@@ -80,103 +77,10 @@ export default function CreateTask() {
       return;
     }
 
-    setLoading(true);
-
-    try {
-      let deadline: Date;
-      let checkIns: any[] | undefined;
-
-      if (taskType === 'single') {
-        // 单次任务：从现在开始计算截止时间
-        deadline = new Date();
-        deadline.setMinutes(deadline.getMinutes() + totalMinutes);
-      } else {
-        // 重复任务：截止时间为从今天开始的第N天的23:59:59
-        deadline = new Date();
-        deadline.setDate(deadline.getDate() + repeatDays);
-        deadline.setHours(23, 59, 59, 999);
-
-        // 初始化打卡记录
-        checkIns = [];
-        const today = new Date();
-        for (let i = 0; i < repeatDays; i++) {
-          const checkDate = new Date(today);
-          checkDate.setDate(today.getDate() + i);
-          checkIns.push({
-            date: checkDate.toISOString().split('T')[0],
-            checked: false,
-          });
-        }
-      }
-
-      const newTask = await createTask({
-        user_id: user.id,
-        title: title.trim(),
-        bet_amount: betAmount,
-        status: 'pending',
-        deadline: deadline.toISOString(),
-        task_type: taskType,
-        repeat_days: taskType === 'repeat' ? repeatDays : undefined,
-        check_ins: checkIns,
-        is_supervised: isSupervised,
-        bounty_coins: isSupervised ? bountyCoins : 0,
-        supervision_status: isSupervised ? 'waiting_invite' : 'none',
-      });
-
-      if (newTask) {
-        // 注意：押金和赏金的扣除已经在 createTask 中通过 coinStore 处理
-        // 这里只需要更新本地的 profile 显示
-        const totalCost = isSupervised ? betAmount + bountyCoins : betAmount;
-        const newCoins = profile.dignity_coins - totalCost;
-        updateDignityCoins(user.id, newCoins);
-
-        console.log('[CreateTask] 任务创建成功，总花费:', totalCost, '剩余:', newCoins);
-
-        // 触发成就检测（创建任务时检测）
-        const { useAchievementStore } = await import('@/lib/stores/achievementStore');
-        await useAchievementStore.getState().checkAndUnlockAchievements(user.id);
-
-        Taro.showToast({
-          title: '任务创建成功',
-          icon: 'success',
-        });
-
-        // 如果开启了监督，提示用户分享
-        if (isSupervised) {
-          setTimeout(() => {
-            Taro.showModal({
-              title: '邀请好友监督',
-              content: '任务已创建！请分享给好友，邀请TA来监督你完成任务。',
-              confirmText: '去分享',
-              cancelText: '稍后',
-              success: (res) => {
-                if (res.confirm) {
-                  // 触发分享
-                  Taro.showShareMenu({
-                    withShareTicket: true,
-                  });
-                }
-                Taro.navigateBack();
-              },
-            });
-          }, 1000);
-        } else {
-          setTimeout(() => {
-            Taro.navigateBack();
-          }, 1000);
-        }
-      } else {
-        throw new Error('创建失败');
-      }
-    } catch (error) {
-      console.error('[CreateTask] Error:', error);
-      Taro.showToast({
-        title: '创建失败，请重试',
-        icon: 'none',
-      });
-    } finally {
-      setLoading(false);
-    }
+    // 跳转到社交契约设置页
+    Taro.navigateTo({
+      url: `/pages/tasks/contract?title=${encodeURIComponent(title)}&betAmount=${betAmount}&taskType=${taskType}&repeatDays=${repeatDays}&hours=${hours}&minutes=${minutes}`,
+    });
   };
 
   return (
@@ -327,70 +231,11 @@ export default function CreateTask() {
         </View>
       )}
 
-      {/* 好友监督开关 */}
-      <View className='form-section'>
-        <View className='supervision-header'>
-          <Text className='section-title'>好友监督</Text>
-          <Switch
-            checked={isSupervised}
-            onChange={(e) => setIsSupervised(e.detail.value)}
-            color='#ff3b30'
-          />
-        </View>
-        {isSupervised && (
-          <View className='supervision-content'>
-            <Text className='supervision-desc'>
-              开启后，需要邀请好友监督你完成任务。完成时需提交证据，由好友审核。
-            </Text>
-            <View className='bounty-section'>
-              <Text className='bounty-label'>监督赏金</Text>
-              <View className='bounty-options'>
-                {[5, 10, 20, 30].map((amount) => (
-                  <View
-                    key={amount}
-                    className={`bounty-option ${bountyCoins === amount ? 'active' : ''}`}
-                    onClick={() => setBountyCoins(amount)}
-                  >
-                    <Text className='bounty-text'>{amount}</Text>
-                  </View>
-                ))}
-              </View>
-              <Slider
-                className='bounty-slider'
-                min={5}
-                max={50}
-                step={5}
-                value={bountyCoins}
-                activeColor='#ff3b30'
-                backgroundColor='#333'
-                blockColor='#ff3b30'
-                blockSize={20}
-                onChange={(e) => setBountyCoins(e.detail.value)}
-                onChanging={(e) => setBountyCoins(e.detail.value)}
-              />
-              <Text className='bounty-value'>{bountyCoins} 币</Text>
-            </View>
-            <View className='supervision-rules'>
-              <Text className='rules-title'>规则说明：</Text>
-              <Text className='rules-item'>• 通过：返还本金，好友获得赏金</Text>
-              <Text className='rules-item'>• 拒绝：本金没收，好友获得赏金+50%本金</Text>
-              <Text className='rules-item'>• 超时：24小时未审核自动通过，赏金退回</Text>
-            </View>
-            <View className='total-cost'>
-              <Text className='cost-label'>总花费：</Text>
-              <Text className='cost-value'>{betAmount + bountyCoins} 币</Text>
-              <Text className='cost-detail'>（本金{betAmount} + 赏金{bountyCoins}）</Text>
-            </View>
-          </View>
-        )}
-      </View>
-
+      {/* 警告提示 */}
       <View className='warning-box'>
         <Text className='warning-text'>⚠️ 警告</Text>
         <Text className='warning-desc'>
-          {isSupervised
-            ? `开启监督后，完成任务需提交证据并由好友审核。若被拒绝，将扣除 ${betAmount} 尊严币，好友还将获得 ${Math.floor(betAmount * 0.5)} 币分红！`
-            : taskType === 'single'
+          {taskType === 'single'
             ? `任务超时未完成将扣除 ${betAmount} 尊严币，并触发 AI 毒舌嘲讽，记录将公开至耻辱墙！`
             : `任意一天未打卡将扣除 ${betAmount} 尊严币，并触发 AI 毒舌嘲讽，记录将公开至耻辱墙！`
           }
@@ -398,11 +243,11 @@ export default function CreateTask() {
       </View>
 
       <Button
-        className={`submit-button ${loading ? 'disabled' : ''}`}
+        className={`submit-button ${loading || !betAmount ? 'disabled' : ''}`}
         onClick={handleCreate}
-        disabled={loading}
+        disabled={loading || !betAmount}
       >
-        {loading ? '创建中...' : '创建任务'}
+        {loading ? '处理中...' : '下一步：设置契约'}
       </Button>
     </View>
   );

@@ -3,11 +3,13 @@ export default defineAppConfig({
     'pages/index/index',
     'pages/auth/index',
     'pages/tasks/create',
+    'pages/tasks/contract',
     'pages/tasks/detail',
     'pages/shame/index',
     'pages/profile/index',
     'pages/checkin/index',
-    'pages/achievements/index'
+    'pages/achievements/index',
+    'pages/social/index'
   ],
   tabBar: {
     color: '#666',

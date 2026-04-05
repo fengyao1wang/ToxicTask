@@ -2,10 +2,11 @@
   min-height: 100vh;
   background-color: #0a0a0a;
   padding: 20px;
+  padding-bottom: 80px;
 }
 
 .header {
-  margin-bottom: 30px;
+  margin-bottom: 20px;
 }
 
 .header-title {
@@ -20,6 +21,39 @@
   font-size: 14px;
   color: #666;
   display: block;
+}
+
+/* Tab切换栏 */
+.tab-bar {
+  display: flex;
+  background-color: #1a1a1a;
+  border-radius: 8px;
+  margin-bottom: 20px;
+  padding: 4px;
+}
+
+.tab-item {
+  flex: 1;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.tab-item.active {
+  background-color: #ff3b30;
+}
+
+.tab-text {
+  font-size: 14px;
+  color: #999;
+}
+
+.tab-item.active .tab-text {
+  color: #fff;
+  font-weight: bold;
 }
 
 .loading-text {
@@ -95,6 +129,29 @@
   font-size: 14px;
   color: #ff3b30;
   line-height: 1.5;
+}
+
+/* 监督者评论 */
+.supervisor-comment {
+  background-color: rgba(255, 59, 48, 0.1);
+  border-left: 3px solid #ff3b30;
+  border-radius: 6px;
+  padding: 10px;
+  margin-bottom: 12px;
+}
+
+.supervisor-label {
+  font-size: 12px;
+  color: #ff6b6b;
+  display: block;
+  margin-bottom: 6px;
+}
+
+.supervisor-text {
+  font-size: 13px;
+  color: #fff;
+  line-height: 1.5;
+  display: block;
 }
 
 .shame-bet {

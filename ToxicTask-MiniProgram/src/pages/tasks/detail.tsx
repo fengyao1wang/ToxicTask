@@ -152,9 +152,27 @@ export default function TaskDetail() {
 
   // 分享任务
   const handleShareTask = () => {
-    Taro.showShareMenu({
-      withShareTicket: true,
-    });
+    // 在开发工具中，showShareMenu 会报错，所以只显示提示
+    const env = Taro.getEnv();
+    if (env === Taro.ENV_TYPE.WEAPP) {
+      // 真机环境，显示分享菜单
+      Taro.showShareMenu({
+        withShareTicket: true,
+      }).catch((err) => {
+        console.warn('[TaskDetail] showShareMenu 失败:', err);
+        Taro.showToast({
+          title: '请点击右上角分享',
+          icon: 'none',
+        });
+      });
+    } else {
+      // 开发工具环境，只显示提示
+      Taro.showToast({
+        title: '请在真机上测试分享功能',
+        icon: 'none',
+        duration: 2000,
+      });
+    }
   };
 
   if (!task) {
