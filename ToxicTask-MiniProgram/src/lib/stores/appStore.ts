@@ -34,7 +34,7 @@ const SHAME_LOGS_STORAGE_KEY = 'toxictask_shame_logs';
 
 // 生成唯一 ID
 const generateId = () => {
-  return `shame_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+  return `shame_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`;
 };
 
 // 从本地存储加载 profile
