@@ -201,32 +201,12 @@ export default function SocialContractSetup() {
         await useAchievementStore.getState().checkAndUnlockAchievements(user.id);
 
         Taro.showToast({
-          title: '任务创建成功',
+          title: '任务创建成功，请分享给好友',
           icon: 'success',
+          duration: 2000,
         });
 
-        // 提示分享
-        setTimeout(() => {
-          Taro.showModal({
-            title: '邀请好友监督',
-            content: `我不信我做不到"${title}"，敢不敢来拿走我的${bountyCoins}币？`,
-            confirmText: '立即分享',
-            cancelText: '稍后',
-            success: (res) => {
-              if (res.confirm) {
-                const env = Taro.getEnv();
-                if (env === Taro.ENV_TYPE.WEAPP) {
-                  Taro.showShareMenu({ withShareTicket: true }).catch(() => {
-                    Taro.showToast({ title: '请点击右上角分享', icon: 'none' });
-                  });
-                } else {
-                  Taro.showToast({ title: '请在真机上测试分享', icon: 'none' });
-                }
-              }
-              Taro.navigateBack({ delta: 2 });
-            },
-          });
-        }, 1000);
+        // 不再自动返回，等待用户点击分享按钮
       }
     } catch (error) {
       console.error('[Contract] 创建失败:', error);
@@ -336,24 +316,44 @@ export default function SocialContractSetup() {
           </View>
 
           {/* 邀请按钮 */}
-          <Button
-            className='invite-button'
-            onClick={handleCreateSupervised}
-            disabled={loading}
-          >
-            {loading ? '创建中...' : '邀请微信好友监督'}
-          </Button>
+          {!createdTaskId ? (
+            <Button
+              className='invite-button'
+              onClick={handleCreateSupervised}
+              disabled={loading}
+            >
+              {loading ? '创建中...' : '创建任务'}
+            </Button>
+          ) : (
+            <>
+              <Button
+                className='invite-button'
+                openType='share'
+                disabled={loading}
+              >
+                邀请微信好友监督
+              </Button>
+              <Button
+                className='back-button'
+                onClick={() => Taro.navigateBack({ delta: 2 })}
+              >
+                返回首页
+              </Button>
+            </>
+          )}
         </>
       )}
 
       {/* 单机模式按钮 */}
-      <Button
-        className='direct-button'
-        onClick={handleCreateDirect}
-        disabled={loading}
-      >
-        {loading ? '创建中...' : isSupervised ? '不找监督，直接创建' : '创建任务'}
-      </Button>
+      {!createdTaskId && (
+        <Button
+          className='direct-button'
+          onClick={handleCreateDirect}
+          disabled={loading}
+        >
+          {loading ? '创建中...' : isSupervised ? '不找监督，直接创建' : '创建任务'}
+        </Button>
+      )}
     </View>
   );
 }
