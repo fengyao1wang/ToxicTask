@@ -19,96 +19,128 @@ const generateId = (): string => {
   return `${Date.now()}_${Math.random().toString(36).substring(2, 9)}`;
 };
 
-// 预设成就列表
+// 预设成就列表（根据配置清单）
 const PRESET_ACHIEVEMENTS: Achievement[] = [
+  // 1. 时间管理类
   {
-    id: 'achievement_001',
-    type: 'total_complete',
-    title: '新手上路',
-    description: '完成第一个任务',
-    icon: '🎯',
+    id: 'achievement_early_bird',
+    type: 'early_bird',
+    title: '早起的鸟',
+    description: '早起的鸟儿有虫吃',
+    icon: '🐦',
     coins_reward: 10,
     condition: { target: 1 },
   },
   {
-    id: 'achievement_002',
-    type: 'consecutive_complete',
-    title: '连胜三天',
-    description: '连续3天完成任务',
-    icon: '🔥',
-    coins_reward: 20,
-    condition: { target: 3 },
-  },
-  {
-    id: 'achievement_003',
-    type: 'consecutive_complete',
-    title: '连胜一周',
-    description: '连续7天完成任务',
-    icon: '⚡',
-    coins_reward: 50,
-    condition: { target: 7 },
-  },
-  {
-    id: 'achievement_004',
-    type: 'high_bet_complete',
-    title: '高风险玩家',
-    description: '完成一个押注≥50币的任务',
-    icon: '💎',
-    coins_reward: 30,
-    condition: { target: 50 },
-  },
-  {
-    id: 'achievement_005',
-    type: 'total_complete',
-    title: '任务达人',
-    description: '累计完成10个任务',
-    icon: '🏆',
-    coins_reward: 50,
-    condition: { target: 10 },
-  },
-  {
-    id: 'achievement_006',
-    type: 'total_complete',
-    title: '任务大师',
-    description: '累计完成50个任务',
-    icon: '👑',
-    coins_reward: 100,
-    condition: { target: 50 },
-  },
-  {
-    id: 'achievement_007',
-    type: 'perfect_week',
-    title: '完美一周',
-    description: '一周内所有任务全部完成',
-    icon: '✨',
-    coins_reward: 80,
+    id: 'achievement_early_worm',
+    type: 'early_worm',
+    title: '早起的虫',
+    description: '醒得早有什么用，还不是被鸟吃。',
+    icon: '🐛',
+    coins_reward: 5,
     condition: { target: 1 },
   },
   {
-    id: 'achievement_008',
-    type: 'early_bird',
-    title: '早起的鸟儿',
-    description: '提前1小时完成任务',
-    icon: '🐦',
+    id: 'achievement_midnight_warrior',
+    type: 'midnight_warrior',
+    title: '零点战神',
+    description: '别人深夜emo，你深夜计划，赢了！',
+    icon: '🌙',
     coins_reward: 15,
     condition: { target: 1 },
   },
   {
-    id: 'achievement_009',
-    type: 'consecutive_checkin',
-    title: '签到达人',
-    description: '连续签到7天',
-    icon: '📅',
-    coins_reward: 30,
-    condition: { target: 7 },
+    id: 'achievement_deadline_jedi',
+    type: 'deadline_jedi',
+    title: 'DDL战神',
+    description: '这不是拖延，是效率。',
+    icon: '⚡',
+    coins_reward: 20,
+    condition: { target: 1 },
   },
   {
-    id: 'achievement_010',
-    type: 'invite_friends',
-    title: '邀请达人',
-    description: '邀请5个好友',
-    icon: '👥',
-    coins_reward: 50,
+    id: 'achievement_gone_girl',
+    type: 'gone_girl',
+    title: '消失的爱人',
+    description: '不敢面对失败的自己。',
+    icon: '👻',
+    coins_reward: 5,
+    condition: { target: 1 },
+  },
+
+  // 2. 押注与资产类
+  {
+    id: 'achievement_philanthropist',
+    type: 'philanthropist',
+    title: '大慈善家',
+    description: '致力于将尊严币重新分配给全宇宙。',
+    icon: '💸',
+    coins_reward: 10,
+    condition: { target: 20 },
+  },
+  {
+    id: 'achievement_wealth_dispenser',
+    type: 'wealth_dispenser',
+    title: '散财童子',
+    description: '。',
+    icon: '💰',
+    coins_reward: 15,
+    condition: { target: 3 },
+  },
+  {
+    id: 'achievement_penny_pincher',
+    type: 'penny_pincher',
+    title: '铁公鸡',
+    description: '勤俭节约，传统美德',
+    icon: '🐔',
+    coins_reward: 20,
+    condition: { target: 10 },
+  },
+  {
+    id: 'achievement_all_in_master',
+    type: 'all_in_master',
+    title: '梭哈大师',
+    description: '要么自律成神，要么穷得叮当响。',
+    icon: '🎰',
+    coins_reward: 30,
+    condition: { target: 80 },
+  },
+  {
+    id: 'achievement_wall_street_sheep',
+    type: 'wall_street_sheep',
+    title: '华尔街之羊',
+    description: '辛苦攒币大半年，一朝回到解放前。',
+    icon: '🐑',
+    coins_reward: 10,
+    condition: { target: 1 },
+  },
+
+  // 3. 状态与社交类
+  {
+    id: 'achievement_wall_resident',
+    type: 'wall_resident',
+    title: '耻辱墙钉子户',
+    description: '墙上没你，大家都觉得这小程序出 Bug 了。',
+    icon: '📌',
+    coins_reward: 15,
+    condition: { target: 5 },
+  },
+  {
+    id: 'achievement_situp_champion',
+    type: 'situp_champion',
+    title: '仰卧起坐选手',
+    description: '间歇性踌躇满志，持续性混吃等死。',
+    icon: '🤸',
+    coins_reward: 20,
+    condition: { target: 1 },
+  },
+  {
+    id: 'achievement_flag_collector',
+    type: 'flag_collector',
+    title: 'Flag 收藏家',
+    description: '计划列得越多，看上去就越像个自律的人。',
+    icon: '🚩',
+    coins_reward: 10,
     condition: { target: 5 },
   },
 ];
@@ -389,130 +421,284 @@ const checkAchievementCondition = async (
 const calculateAchievementProgress = (userId: string, achievement: Achievement): number => {
   const tasks = getTasksData(userId);
   const completedTasks = tasks.filter((t) => t.status === 'completed');
+  const failedTasks = tasks.filter((t) => t.status === 'failed');
 
   switch (achievement.type) {
-    case 'total_complete':
-      // 累计完成任务数
-      return completedTasks.length;
-
-    case 'consecutive_complete':
-      // 连续完成任务天数
-      return calculateConsecutiveCompleteDays(completedTasks);
-
-    case 'high_bet_complete':
-      // 完成高押注任务
-      const highBetTasks = completedTasks.filter(
-        (t) => t.bet_amount >= achievement.condition.target
-      );
-      return highBetTasks.length > 0 ? achievement.condition.target : 0;
-
-    case 'perfect_week':
-      // 一周内全部完成
-      return checkPerfectWeek(tasks) ? 1 : 0;
-
+    // 1. 时间管理类
     case 'early_bird':
-      // 提前完成任务
-      return checkEarlyBird(completedTasks) ? 1 : 0;
+      // 早起的鸟：制定计划时间早于08:00且任务完成
+      return checkEarlyBirdSuccess(completedTasks) ? 1 : 0;
 
-    case 'consecutive_checkin':
-      // 连续签到天数
-      const checkIns = getCheckInsData(userId);
-      return calculateConsecutiveCheckInDays(checkIns);
+    case 'early_worm':
+      // 早起的虫：制定计划时间早于08:00且任务失败
+      return checkEarlyWorm(failedTasks) ? 1 : 0;
 
-    case 'invite_friends':
-      // 邀请好友数
-      const invites = getInvitesData(userId);
-      return invites.length;
+    case 'midnight_warrior':
+      // 零点战神：制定计划时间在00:00-02:00之间
+      return checkMidnightWarrior(tasks) ? 1 : 0;
+
+    case 'deadline_jedi':
+      // DDL战神：截止时间前5分钟内完成任务
+      return checkDeadlineJedi(completedTasks) ? 1 : 0;
+
+    case 'gone_girl':
+      // 消失的爱人：任务失败后24小时没有进入小程序
+      return checkGoneGirl(userId, failedTasks) ? 1 : 0;
+
+    // 2. 押注与资产类
+    case 'philanthropist':
+      // 大慈善家：单次任务押注>20且失败
+      return checkPhilanthropist(failedTasks, achievement.condition.target) ? achievement.condition.target : 0;
+
+    case 'wealth_dispenser':
+      // 散财童子：连续3次任务失败且押注都>20
+      return checkWealthDispenser(failedTasks);
+
+    case 'penny_pincher':
+      // 铁公鸡：累计完成10个任务，每个押注都是1币
+      return checkPennyPincher(completedTasks);
+
+    case 'all_in_master':
+      // 梭哈大师：单次押注占账户余额80%以上
+      return checkAllInMaster(userId, tasks, achievement.condition.target) ? achievement.condition.target : 0;
+
+    case 'wall_street_sheep':
+      // 华尔街之羊：单次失败扣除所有剩余尊严币（破产）
+      return checkWallStreetSheep(userId, failedTasks) ? 1 : 0;
+
+    // 3. 状态与社交类
+    case 'wall_resident':
+      // 耻辱墙钉子户：自然周7天内有5天及以上有失败记录
+      return checkWallResident(failedTasks);
+
+    case 'situp_champion':
+      // 仰卧起坐选手：连续3天完成后紧接着连续3天失败
+      return checkSitupChampion(tasks) ? 1 : 0;
+
+    case 'flag_collector':
+      // Flag收藏家：同时存在5个及以上进行中的任务
+      return checkFlagCollector(tasks);
 
     default:
       return 0;
   }
 };
 
-// 计算连续完成任务天数
-const calculateConsecutiveCompleteDays = (completedTasks: any[]): number => {
-  if (completedTasks.length === 0) return 0;
+// ==================== 时间管理类检测函数 ====================
 
-  // 按完成时间降序排序
-  const sorted = [...completedTasks].sort(
-    (a, b) => new Date(b.updated_at).getTime() - new Date(a.updated_at).getTime()
-  );
-
-  let consecutiveDays = 0;
-  let currentDate = new Date();
-  const checkedDates = new Set<string>();
-
-  for (const task of sorted) {
-    const taskDate = new Date(task.updated_at).toISOString().split('T')[0];
-
-    if (checkedDates.has(taskDate)) continue;
-    checkedDates.add(taskDate);
-
-    const diffDays = Math.floor(
-      (currentDate.getTime() - new Date(taskDate).getTime()) / (1000 * 60 * 60 * 24)
-    );
-
-    if (diffDays === consecutiveDays) {
-      consecutiveDays++;
-      currentDate = new Date(taskDate);
-    } else {
-      break;
-    }
-  }
-
-  return consecutiveDays;
-};
-
-// 检查一周内是否全部完成
-const checkPerfectWeek = (tasks: any[]): boolean => {
-  const now = new Date();
-  const weekAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
-
-  const weekTasks = tasks.filter((t) => {
-    const createdAt = new Date(t.created_at);
-    return createdAt >= weekAgo && createdAt <= now;
+// 早起的鸟：制定计划时间早于08:00且任务完成
+const checkEarlyBirdSuccess = (completedTasks: any[]): boolean => {
+  return completedTasks.some((task) => {
+    const createdAt = new Date(task.created_at);
+    const hour = createdAt.getHours();
+    return hour < 8;
   });
-
-  if (weekTasks.length === 0) return false;
-
-  return weekTasks.every((t) => t.status === 'completed');
 };
 
-// 检查是否提前完成任务
-const checkEarlyBird = (completedTasks: any[]): boolean => {
+// 早起的虫：制定计划时间早于08:00且任务失败
+const checkEarlyWorm = (failedTasks: any[]): boolean => {
+  return failedTasks.some((task) => {
+    const createdAt = new Date(task.created_at);
+    const hour = createdAt.getHours();
+    return hour < 8;
+  });
+};
+
+// 零点战神：制定计划时间在00:00-02:00之间
+const checkMidnightWarrior = (tasks: any[]): boolean => {
+  return tasks.some((task) => {
+    const createdAt = new Date(task.created_at);
+    const hour = createdAt.getHours();
+    return hour >= 0 && hour < 2;
+  });
+};
+
+// DDL战神：截止时间前5分钟内完成任务
+const checkDeadlineJedi = (completedTasks: any[]): boolean => {
   return completedTasks.some((task) => {
     const completedAt = new Date(task.updated_at).getTime();
     const deadline = new Date(task.deadline).getTime();
-    const oneHour = 60 * 60 * 1000;
-
-    return deadline - completedAt >= oneHour;
+    const fiveMinutes = 5 * 60 * 1000;
+    const timeDiff = deadline - completedAt;
+    return timeDiff >= 0 && timeDiff <= fiveMinutes;
   });
 };
 
-// 计算连续签到天数
-const calculateConsecutiveCheckInDays = (checkIns: any[]): number => {
-  if (checkIns.length === 0) return 0;
+// 消失的爱人：任务失败后24小时没有进入小程序
+const checkGoneGirl = (userId: string, failedTasks: any[]): boolean => {
+  if (failedTasks.length === 0) return false;
 
-  const sorted = [...checkIns].sort(
-    (a, b) => new Date(b.check_in_date).getTime() - new Date(a.check_in_date).getTime()
+  try {
+    // 获取最后一次失败任务的时间
+    const lastFailedTask = failedTasks.sort(
+      (a, b) => new Date(b.updated_at).getTime() - new Date(a.updated_at).getTime()
+    )[0];
+    const lastFailedTime = new Date(lastFailedTask.updated_at).getTime();
+
+    // 获取用户最后活跃时间（从本地存储读取）
+    const lastActiveKey = `last_active_${userId}`;
+    const lastActiveTime = Taro.getStorageSync(lastActiveKey) || Date.now();
+
+    const twentyFourHours = 24 * 60 * 60 * 1000;
+    const timeSinceFailure = lastActiveTime - lastFailedTime;
+
+    return timeSinceFailure >= twentyFourHours;
+  } catch (error) {
+    console.error('[Achievement][Error] 检查消失的爱人失败:', error);
+    return false;
+  }
+};
+
+// ==================== 押注与资产类检测函数 ====================
+
+// 大慈善家：单次任务押注>20且失败
+const checkPhilanthropist = (failedTasks: any[], minBet: number): boolean => {
+  return failedTasks.some((task) => task.bet_amount > minBet);
+};
+
+// 散财童子：连续3次任务失败且押注都>20
+const checkWealthDispenser = (failedTasks: any[]): number => {
+  if (failedTasks.length < 3) return 0;
+
+  // 按时间降序排序
+  const sorted = [...failedTasks].sort(
+    (a, b) => new Date(b.updated_at).getTime() - new Date(a.updated_at).getTime()
   );
 
-  let consecutiveDays = 0;
-  let currentDate = new Date();
+  // 检查最近3次失败是否都>20
+  const recentThree = sorted.slice(0, 3);
+  const allHighBet = recentThree.every((task) => task.bet_amount > 20);
 
-  for (const checkIn of sorted) {
-    const checkInDate = new Date(checkIn.check_in_date);
-    const diffDays = Math.floor(
-      (currentDate.getTime() - checkInDate.getTime()) / (1000 * 60 * 60 * 24)
-    );
+  return allHighBet ? 3 : 0;
+};
 
-    if (diffDays === consecutiveDays) {
-      consecutiveDays++;
-      currentDate = checkInDate;
-    } else {
-      break;
+// 铁公鸡：累计完成10个任务，每个押注都是1币
+const checkPennyPincher = (completedTasks: any[]): number => {
+  const lowBetTasks = completedTasks.filter((task) => task.bet_amount === 1);
+  return lowBetTasks.length >= 10 ? 10 : lowBetTasks.length;
+};
+
+// 梭哈大师：单次押注占账户余额80%以上
+const checkAllInMaster = (userId: string, tasks: any[], minPercentage: number): boolean => {
+  try {
+    // 获取交易记录来计算押注时的余额
+    const transactions = Taro.getStorageSync(STORAGE_KEYS.TRANSACTIONS) || {};
+    const userTransactions = transactions[userId] || [];
+
+    return tasks.some((task) => {
+      // 找到该任务创建时的余额
+      const taskCreatedTime = new Date(task.created_at).getTime();
+
+      // 计算任务创建前的余额
+      let balanceBeforeTask = 100; // 初始余额
+      for (const tx of userTransactions) {
+        const txTime = new Date(tx.created_at).getTime();
+        if (txTime < taskCreatedTime) {
+          balanceBeforeTask += tx.amount;
+        }
+      }
+
+      // 计算押注占比
+      const percentage = (task.bet_amount / balanceBeforeTask) * 100;
+      return percentage >= minPercentage;
+    });
+  } catch (error) {
+    console.error('[Achievement][Error] 检查梭哈大师失败:', error);
+    return false;
+  }
+};
+
+// 华尔街之羊：单次失败扣除所有剩余尊严币（破产）
+const checkWallStreetSheep = (userId: string, failedTasks: any[]): boolean => {
+  try {
+    const transactions = Taro.getStorageSync(STORAGE_KEYS.TRANSACTIONS) || {};
+    const userTransactions = transactions[userId] || [];
+
+    return failedTasks.some((task) => {
+      const taskFailedTime = new Date(task.updated_at).getTime();
+
+      // 计算任务失败前的余额
+      let balanceBeforeFailure = 100;
+      for (const tx of userTransactions) {
+        const txTime = new Date(tx.created_at).getTime();
+        if (txTime < taskFailedTime) {
+          balanceBeforeFailure += tx.amount;
+        }
+      }
+
+      // 检查是否破产（余额>0但失败后扣除了所有余额）
+      return balanceBeforeFailure > 0 && task.bet_amount >= balanceBeforeFailure;
+    });
+  } catch (error) {
+    console.error('[Achievement][Error] 检查华尔街之羊失败:', error);
+    return false;
+  }
+};
+
+// ==================== 状态与社交类检测函数 ====================
+
+// 耻辱墙钉子户：自然周7天内有5天及以上有失败记录
+const checkWallResident = (failedTasks: any[]): number => {
+  if (failedTasks.length === 0) return 0;
+
+  const now = new Date();
+  const currentWeekStart = new Date(now);
+  currentWeekStart.setDate(now.getDate() - now.getDay()); // 本周日
+  currentWeekStart.setHours(0, 0, 0, 0);
+
+  // 统计本周每天是否有失败记录
+  const failedDays = new Set<string>();
+  failedTasks.forEach((task) => {
+    const failedDate = new Date(task.updated_at);
+    if (failedDate >= currentWeekStart) {
+      const dateStr = failedDate.toISOString().split('T')[0];
+      failedDays.add(dateStr);
+    }
+  });
+
+  return failedDays.size;
+};
+
+// 仰卧起坐选手：连续3天完成后紧接着连续3天失败
+const checkSitupChampion = (tasks: any[]): boolean => {
+  if (tasks.length < 6) return false;
+
+  // 按时间排序
+  const sorted = [...tasks].sort(
+    (a, b) => new Date(a.updated_at).getTime() - new Date(b.updated_at).getTime()
+  );
+
+  // 按天分组
+  const dayGroups = new Map<string, any[]>();
+  sorted.forEach((task) => {
+    const date = new Date(task.updated_at).toISOString().split('T')[0];
+    if (!dayGroups.has(date)) {
+      dayGroups.set(date, []);
+    }
+    dayGroups.get(date)!.push(task);
+  });
+
+  // 检查每天的主要状态
+  const dailyStatus: string[] = [];
+  dayGroups.forEach((tasks) => {
+    const completed = tasks.filter((t) => t.status === 'completed').length;
+    const failed = tasks.filter((t) => t.status === 'failed').length;
+    dailyStatus.push(completed > failed ? 'completed' : 'failed');
+  });
+
+  // 查找连续3天完成+连续3天失败的模式
+  for (let i = 0; i <= dailyStatus.length - 6; i++) {
+    const pattern = dailyStatus.slice(i, i + 6).join(',');
+    if (pattern === 'completed,completed,completed,failed,failed,failed') {
+      return true;
     }
   }
 
-  return consecutiveDays;
+  return false;
+};
+
+// Flag收藏家：同时存在5个及以上进行中的任务
+const checkFlagCollector = (tasks: any[]): number => {
+  const pendingTasks = tasks.filter((task) => task.status === 'pending');
+  return pendingTasks.length;
 };

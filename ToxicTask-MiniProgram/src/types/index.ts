@@ -56,13 +56,22 @@ export interface CheckInRecord {
 
 // 2. 成就系统
 export type AchievementType =
-  | 'consecutive_complete' // 连续完成任务
-  | 'high_bet_complete'    // 完成高押注任务
-  | 'total_complete'       // 累计完成任务数
-  | 'perfect_week'         // 一周内全部完成
-  | 'early_bird'           // 提前完成任务
-  | 'consecutive_checkin'  // 连续签到
-  | 'invite_friends';      // 邀请好友
+  // 时间管理类
+  | 'early_bird'           // 早起的鸟：制定计划早于08:00且完成
+  | 'early_worm'           // 早起的虫：制定计划早于08:00且失败
+  | 'midnight_warrior'     // 零点战神：制定计划在00:00-02:00
+  | 'deadline_jedi'        // DDL战神：截止前5分钟内完成
+  | 'gone_girl'            // 消失的爱人：失败后24小时未进入
+  // 押注与资产类
+  | 'philanthropist'       // 大慈善家：单次押注>20且失败
+  | 'wealth_dispenser'     // 散财童子：连续3次失败且押注>20
+  | 'penny_pincher'        // 铁公鸡：累计完成10个任务押注都是1
+  | 'all_in_master'        // 梭哈大师：单次押注占余额80%以上
+  | 'wall_street_sheep'    // 华尔街之羊：单次失败破产
+  // 状态与社交类
+  | 'wall_resident'        // 耻辱墙钉子户：自然周7天内5天有失败
+  | 'situp_champion'       // 仰卧起坐选手：连续3天完成+连续3天失败
+  | 'flag_collector';      // Flag收藏家：同时5个进行中任务
 
 export interface AchievementCondition {
   target: number; // 目标值（如连续3天、累计10个）

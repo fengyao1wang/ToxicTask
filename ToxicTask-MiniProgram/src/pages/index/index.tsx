@@ -16,6 +16,11 @@ export default function Index() {
 
   useEffect(() => {
     checkAuth();
+    // 记录用户活跃时间（用于"消失的爱人"成就检测）
+    if (user) {
+      const lastActiveKey = `last_active_${user.id}`;
+      Taro.setStorageSync(lastActiveKey, Date.now());
+    }
   }, []);
 
   // 定时刷新 profile（确保余额最新）
@@ -110,6 +115,11 @@ export default function Index() {
             hasChanges = true;
           }
         }
+      }
+
+      // 如果有任务状态变化，触发成就检测
+      if (hasChanges) {
+        await checkAndUnlockAchievements(user.id);
       }
 
       if (hasChanges) {
@@ -240,6 +250,9 @@ export default function Index() {
 
       // 刷新任务列表
       await fetchTasks(user.id);
+
+      // 检查并解锁成就
+      await checkAndUnlockAchievements(user.id);
 
       // 检查任务是否全部完成
       const updatedTasks = await new Promise<any[]>((resolve) => {

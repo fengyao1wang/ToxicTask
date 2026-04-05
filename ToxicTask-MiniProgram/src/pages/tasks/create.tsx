@@ -142,6 +142,10 @@ export default function CreateTask() {
 
         console.log('[CreateTask] 押金已扣除:', betAmount, '剩余:', newCoins);
 
+        // 触发成就检测（创建任务时检测）
+        const { useAchievementStore } = await import('@/lib/stores/achievementStore');
+        await useAchievementStore.getState().checkAndUnlockAchievements(user.id);
+
         Taro.showToast({
           title: '任务创建成功',
           icon: 'success',
