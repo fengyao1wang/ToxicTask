@@ -69,7 +69,7 @@ export default function Index() {
 
               // 创建耻辱记录
               const shameLog = {
-                id: `shame_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+                id: `shame_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`,
                 task_id: task.id,
                 user_id: user.id,
                 task_title: task.title,
@@ -98,7 +98,7 @@ export default function Index() {
 
             // 创建耻辱记录
             const shameLog = {
-              id: `shame_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+              id: `shame_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`,
               task_id: task.id,
               user_id: user.id,
               task_title: task.title,
@@ -193,7 +193,7 @@ export default function Index() {
 
         // 创建交易记录
         const transaction = {
-          id: `trans_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+          id: `trans_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`,
           user_id: user.id,
           type: 'task_refund',
           amount: betAmount,

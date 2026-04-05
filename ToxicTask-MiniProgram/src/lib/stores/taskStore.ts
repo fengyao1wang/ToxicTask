@@ -27,7 +27,7 @@ const TASKS_STORAGE_KEY = 'toxictask_tasks';
 
 // 生成唯一 ID
 const generateId = () => {
-  return `task_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+  return `task_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`;
 };
 
 // 从本地存储加载任务
