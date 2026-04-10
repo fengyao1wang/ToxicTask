@@ -9,7 +9,7 @@ export default function Auth() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
-  const { setUser, setProfile } = useAppStore();
+  const { setUser, initProfile } = useAppStore();
 
   // 微信授权登录
   const handleWechatLogin = async () => {
@@ -17,53 +17,41 @@ export default function Auth() {
     setError('');
 
     try {
-      // 1. 获取微信用户信息
-      const userInfoRes = await Taro.getUserProfile({
-        desc: '用于完善用户资料',
-      });
-
-      const { nickName, avatarUrl } = userInfoRes.userInfo;
-
-      // 2. 获取微信登录凭证
       const loginRes = await Taro.login();
       const code = loginRes.code;
 
-      // 3. 使用微信 openid 作为唯一标识登录
-      // 这里简化处理：使用 code 作为临时用户标识
-      const mockUser = {
-        id: `wx_${code.substring(0, 10)}`,
-        email: `${code.substring(0, 10)}@wechat.user`,
-        user_metadata: {
-          nickname: nickName,
-          avatar_url: avatarUrl,
-        },
-      };
+      if (!code) {
+        throw new Error('获取微信登录凭证失败，请重试');
+      }
 
-      // 保存用户信息到本地
-      const sessionData = {
-        user: mockUser,
-        access_token: `mock_token_${code}`,
-      };
+      let nickName = '微信用户';
+      let avatarUrl = '';
 
-      Taro.setStorageSync('supabase_token', sessionData);
-      setUser(mockUser);
+      try {
+        const userInfoRes = await Taro.getUserProfile({
+          desc: '用于完善用户资料',
+        });
+        nickName = userInfoRes.userInfo.nickName;
+        avatarUrl = userInfoRes.userInfo.avatarUrl;
+      } catch (profileError) {
+        console.warn('[Auth][Warn] 获取微信资料失败，使用默认资料:', profileError);
+      }
+
+      const user = await authApi.signInWithWechat(code, nickName, avatarUrl);
+      setUser(user);
+      initProfile(user.id);
 
       Taro.showToast({
         title: '登录成功',
         icon: 'success',
       });
 
-      // 跳转到首页
       setTimeout(() => {
         Taro.switchTab({ url: '/pages/index/index' });
       }, 1000);
     } catch (err: any) {
       console.error('[Auth] 微信登录失败:', err);
-      if (err.errMsg && err.errMsg.includes('getUserProfile:fail auth deny')) {
-        setError('您拒绝了授权，无法登录');
-      } else {
-        setError('登录失败，请重试');
-      }
+      setError(err?.message || '登录失败，请重试');
     } finally {
       setLoading(false);
     }
@@ -71,8 +59,8 @@ export default function Auth() {
 
   return (
     <View className='auth-container'>
-      <Text className='auth-title'>ToxicTask</Text>
-      <Text className='auth-subtitle'>毒舌待办 - 用损失厌恶克服拖延症</Text>
+      <Text className='auth-title'>今天又鸽了</Text>
+      <Text className='auth-subtitle'>Flaked Again</Text>
 
       <View className='auth-form'>
         <View className='wechat-login-section'>
