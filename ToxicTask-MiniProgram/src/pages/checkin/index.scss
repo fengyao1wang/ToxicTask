@@ -1,94 +1,96 @@
 .checkin-container {
   min-height: 100vh;
   background: linear-gradient(180deg, #1a1a1a 0%, #0a0a0a 100%);
-  padding: 40px 32px;
+  padding: 60rpx 48rpx;
+  box-sizing: border-box;
 }
 
 /* 顶部标题 */
 .checkin-header {
   text-align: center;
-  margin-bottom: 48px;
+  margin-bottom: 72rpx;
 }
 
 .checkin-title {
-  font-size: 48px;
+  font-size: 72rpx;
   font-weight: bold;
   color: #ffffff;
-  margin-bottom: 16px;
+  margin-bottom: 24rpx;
 }
 
 .checkin-subtitle {
-  font-size: 28px;
+  font-size: 42rpx;
   color: #888888;
 }
 
 /* 连续签到卡片 */
 .consecutive-card {
   background: linear-gradient(135deg, #2a2a2a 0%, #1f1f1f 100%);
-  border-radius: 32px;
-  padding: 48px 32px;
+  border-radius: 48rpx;
+  padding: 72rpx 48rpx;
   text-align: center;
-  margin-bottom: 48px;
-  border: 2px solid #333333;
+  margin-bottom: 72rpx;
+  border: 3rpx solid #333333;
 }
 
 .consecutive-label {
-  font-size: 28px;
+  font-size: 42rpx;
   color: #888888;
-  margin-bottom: 16px;
+  margin-bottom: 24rpx;
 }
 
 .consecutive-days {
   display: flex;
   align-items: baseline;
   justify-content: center;
-  margin-bottom: 16px;
+  margin-bottom: 24rpx;
 }
 
 .consecutive-number {
-  font-size: 96px;
+  font-size: 144rpx;
   font-weight: bold;
   color: #00ff88;
   line-height: 1;
 }
 
 .consecutive-unit {
-  font-size: 40px;
+  font-size: 60rpx;
   color: #00ff88;
-  margin-left: 8px;
+  margin-left: 12rpx;
 }
 
 .consecutive-badge {
   display: inline-block;
   background: rgba(255, 68, 68, 0.2);
   color: #ff4444;
-  font-size: 24px;
-  padding: 8px 24px;
-  border-radius: 24px;
-  border: 1px solid #ff4444;
+  font-size: 36rpx;
+  padding: 12rpx 36rpx;
+  border-radius: 36rpx;
+  border: 2rpx solid #ff4444;
 }
 
 /* 签到按钮 */
 .checkin-button-wrapper {
-  margin-bottom: 48px;
+  margin-bottom: 72rpx;
 }
 
 .checkin-button {
   width: 100%;
-  height: 96px;
+  height: 144rpx;
   background: linear-gradient(135deg, #00ff88 0%, #00cc6a 100%);
   color: #000000;
-  font-size: 32px;
+  font-size: 48rpx;
   font-weight: bold;
-  border-radius: 24px;
+  border-radius: 36rpx;
   border: none;
-  box-shadow: 0 8px 24px rgba(0, 255, 136, 0.3);
+  box-shadow: 0 12rpx 36rpx rgba(0, 255, 136, 0.3);
   transition: all 0.3s ease;
+  line-height: 144rpx;
 }
 
 .checkin-button:active {
   transform: scale(0.98);
-  box-shadow: 0 4px 12px rgba(0, 255, 136, 0.2);
+  box-shadow: 0 6rpx 18rpx rgba(0, 255, 136, 0.2);
 }
 
 .checkin-button.checked-in {
@@ -99,32 +101,32 @@
 
 /* 签到日历 */
 .calendar-section {
-  margin-bottom: 48px;
+  margin-bottom: 72rpx;
 }
 
 .calendar-title {
-  font-size: 32px;
+  font-size: 48rpx;
   font-weight: bold;
   color: #ffffff;
-  margin-bottom: 24px;
+  margin-bottom: 36rpx;
 }
 
 .calendar-grid {
   display: grid;
   grid-template-columns: repeat(7, 1fr);
-  gap: 12px;
+  gap: 18rpx;
 }
 
 .calendar-day {
   aspect-ratio: 1;
   background: #1f1f1f;
-  border-radius: 16px;
+  border-radius: 24rpx;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   position: relative;
-  border: 2px solid transparent;
+  border: 3rpx solid transparent;
 }
 
 .calendar-day.checked {
@@ -137,7 +139,7 @@
 }
 
 .calendar-day-number {
-  font-size: 24px;
+  font-size: 36rpx;
   color: #888888;
 }
 
@@ -147,45 +149,45 @@
 
 .calendar-check-mark {
   position: absolute;
-  top: 4px;
-  right: 4px;
-  font-size: 16px;
+  top: 6rpx;
+  right: 6rpx;
+  font-size: 24rpx;
   color: #00ff88;
 }
 
 /* 签到记录 */
 .history-section {
-  margin-bottom: 32px;
+  margin-bottom: 48rpx;
 }
 
 .history-title {
-  font-size: 32px;
+  font-size: 48rpx;
   font-weight: bold;
   color: #ffffff;
-  margin-bottom: 24px;
+  margin-bottom: 36rpx;
 }
 
 .empty-state {
   text-align: center;
-  padding: 80px 32px;
+  padding: 120rpx 48rpx;
 }
 
 .empty-text {
   display: block;
-  font-size: 28px;
+  font-size: 42rpx;
   color: #666666;
-  margin-bottom: 16px;
+  margin-bottom: 24rpx;
 }
 
 .empty-hint {
   display: block;
-  font-size: 24px;
+  font-size: 36rpx;
   color: #444444;
 }
 
 .history-list {
   background: #1f1f1f;
-  border-radius: 24px;
+  border-radius: 36rpx;
   overflow: hidden;
 }
 
@@ -193,7 +195,7 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 32px;
+  padding: 48rpx;
   border-bottom: 1px solid #2a2a2a;
 }
 
@@ -202,12 +204,12 @@
 }
 
 .history-date {
-  font-size: 28px;
+  font-size: 42rpx;
   color: #ffffff;
 }
 
 .history-coins {
-  font-size: 28px;
+  font-size: 42rpx;
   font-weight: bold;
   color: #00ff88;
 }

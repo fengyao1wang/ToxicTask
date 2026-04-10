@@ -1,23 +1,24 @@
 .index-container {
   min-height: 100vh;
   background-color: #0a0a0a;
-  padding: 20px;
+  padding: 30rpx;
+  box-sizing: border-box;
 }
 
 .header {
-  margin-bottom: 30px;
+  margin-bottom: 40rpx;
 }
 
 .header-title {
-  font-size: 28px;
+  font-size: 40rpx;
   font-weight: bold;
   color: #fff;
   display: block;
-  margin-bottom: 8px;
+  margin-bottom: 12rpx;
 }
 
 .header-subtitle {
-  font-size: 16px;
+  font-size: 28rpx;
   color: #00ff00;
   display: block;
 }
@@ -25,33 +26,35 @@
 /* 调试面板 */
 .debug-panel {
   background-color: #1a1a1a;
-  border: 2px solid #ff9500;
-  border-radius: 12px;
-  padding: 16px;
-  margin-bottom: 20px;
+  border: 3rpx solid #ff9500;
+  border-radius: 16rpx;
+  padding: 24rpx;
+  margin-bottom: 30rpx;
 }
 
 .debug-title {
-  font-size: 14px;
+  font-size: 28rpx;
   color: #ff9500;
   display: block;
-  margin-bottom: 12px;
+  margin-bottom: 16rpx;
   font-weight: bold;
 }
 
 .debug-buttons {
   display: flex;
-  gap: 10px;
+  gap: 16rpx;
 }
 
 .debug-button {
   flex: 1;
   background-color: #ff9500 !important;
   color: #000 !important;
-  font-size: 13px !important;
+  font-size: 26rpx !important;
   font-weight: bold;
-  border-radius: 6px;
+  border-radius: 12rpx;
   border: none;
+  height: 64rpx;
+  line-height: 64rpx;
 }
 
 .debug-button.reset {
@@ -64,31 +67,31 @@
 }
 
 .task-list {
-  margin-bottom: 80px;
+  margin-bottom: 120rpx;
 }
 
 .loading-text {
   text-align: center;
   color: #666;
-  font-size: 14px;
+  font-size: 28rpx;
   display: block;
-  margin-top: 40px;
+  margin-top: 60rpx;
 }
 
 .empty-state {
   text-align: center;
-  margin-top: 60px;
+  margin-top: 100rpx;
 }
 
 .empty-text {
-  font-size: 18px;
+  font-size: 36rpx;
   color: #666;
   display: block;
-  margin-bottom: 10px;
+  margin-bottom: 16rpx;
 }
 
 .empty-hint {
-  font-size: 14px;
+  font-size: 28rpx;
   color: #444;
   display: block;
 }
@@ -96,22 +99,22 @@
 .task-card {
   background-color: #1a1a1a;
   border: 1px solid #333;
-  border-radius: 12px;
-  padding: 16px;
-  margin-bottom: 12px;
+  border-radius: 16rpx;
+  padding: 24rpx;
+  margin-bottom: 20rpx;
 }
 
 .task-card.task-pending {
-  border-left: 4px solid #00ff00;
+  border-left: 6rpx solid #00ff00;
 }
 
 .task-card.task-completed {
-  border-left: 4px solid #0066ff;
+  border-left: 6rpx solid #0066ff;
   opacity: 0.7;
 }
 
 .task-card.task-failed {
-  border-left: 4px solid #ff3b30;
+  border-left: 6rpx solid #ff3b30;
   opacity: 0.7;
 }
 
@@ -119,57 +122,59 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 12px;
+  margin-bottom: 16rpx;
 }
 
 .task-title {
-  font-size: 18px;
+  font-size: 36rpx;
   font-weight: bold;
   color: #fff;
   flex: 1;
 }
 
 .task-type-badge {
-  font-size: 12px;
+  font-size: 24rpx;
   color: #fff;
   background-color: #00ff88;
-  padding: 4px 8px;
-  border-radius: 4px;
-  margin-left: 8px;
+  padding: 8rpx 16rpx;
+  border-radius: 8rpx;
+  margin-left: 16rpx;
 }
 
 .task-info {
   display: flex;
   justify-content: space-between;
-  margin-bottom: 8px;
+  margin-bottom: 12rpx;
 }
 
 .task-bet {
-  font-size: 14px;
+  font-size: 28rpx;
   color: #00ff00;
 }
 
 .task-status {
-  font-size: 14px;
+  font-size: 28rpx;
   color: #999;
 }
 
 .task-deadline {
-  font-size: 12px;
+  font-size: 24rpx;
   color: #666;
   display: block;
-  margin-bottom: 12px;
+  margin-bottom: 16rpx;
 }
 
 .complete-task-button {
   width: 100%;
+  height: 72rpx;
   background-color: #00ff00 !important;
   color: #000 !important;
-  font-size: 14px !important;
+  font-size: 28rpx !important;
   font-weight: bold;
-  border-radius: 6px;
+  border-radius: 12rpx;
   border: none;
-  margin-top: 8px;
+  margin-top: 12rpx;
+  line-height: 72rpx;
 }
 
 .complete-task-button.supervised {
@@ -184,13 +189,15 @@
 /* 打卡按钮 */
 .checkin-button {
   width: 100%;
+  height: 72rpx;
   background-color: #00ff88 !important;
   color: #000 !important;
-  font-size: 14px !important;
+  font-size: 28rpx !important;
   font-weight: bold;
-  border-radius: 6px;
+  border-radius: 12rpx;
   border: none;
-  margin-top: 8px;
+  margin-top: 12rpx;
+  line-height: 72rpx;
 }
 
 .checkin-button:active {
@@ -200,41 +207,41 @@
 /* 已打卡标记 */
 .checked-badge {
   width: 100%;
-  padding: 8px;
+  padding: 16rpx;
   background-color: rgba(0, 255, 136, 0.1);
-  border: 1px solid #00ff88;
-  border-radius: 6px;
-  margin-top: 8px;
+  border: 2rpx solid #00ff88;
+  border-radius: 12rpx;
+  margin-top: 12rpx;
   text-align: center;
 }
 
 .checked-text {
-  font-size: 14px;
+  font-size: 28rpx;
   color: #00ff88;
   font-weight: bold;
 }
 
 /* 打卡进度 */
 .check-in-progress {
-  margin: 12px 0;
-  padding: 12px;
+  margin: 20rpx 0;
+  padding: 20rpx;
   background-color: rgba(0, 255, 136, 0.05);
-  border-radius: 8px;
+  border-radius: 12rpx;
 }
 
 .check-in-dots {
   display: flex;
   flex-wrap: wrap;
-  gap: 8px;
-  margin-bottom: 8px;
+  gap: 12rpx;
+  margin-bottom: 12rpx;
 }
 
 .check-dot {
-  width: 36px;
-  height: 36px;
+  width: 60rpx;
+  height: 60rpx;
   border-radius: 50%;
   background-color: #2a2a2a;
-  border: 2px solid #444;
+  border: 3rpx solid #444;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -247,7 +254,7 @@
 
 .check-dot.today {
   border-color: #ff3b30;
-  border-width: 3px;
+  border-width: 5rpx;
 }
 
 .check-dot.checked.today {
@@ -255,7 +262,7 @@
 }
 
 .dot-text {
-  font-size: 12px;
+  font-size: 24rpx;
   color: #fff;
   font-weight: bold;
 }
@@ -265,7 +272,7 @@
 }
 
 .progress-text {
-  font-size: 12px;
+  font-size: 24rpx;
   color: #00ff88;
   text-align: center;
   display: block;
@@ -276,34 +283,35 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 8px 12px;
+  padding: 16rpx 20rpx;
   background-color: rgba(90, 200, 250, 0.1);
-  border: 1px solid #5ac8fa;
-  border-radius: 6px;
-  margin-bottom: 12px;
+  border: 2rpx solid #5ac8fa;
+  border-radius: 12rpx;
+  margin-bottom: 20rpx;
 }
 
 .supervision-label {
-  font-size: 13px;
+  font-size: 26rpx;
   color: #5ac8fa;
   font-weight: bold;
 }
 
 .supervision-status {
-  font-size: 12px;
+  font-size: 24rpx;
   color: #5ac8fa;
 }
 
 .create-button {
   position: fixed;
-  bottom: 20px;
-  left: 20px;
-  right: 20px;
-  height: 48px;
+  bottom: 30rpx;
+  left: 30rpx;
+  right: 30rpx;
+  height: 96rpx;
   background-color: #ff3b30;
   color: #fff;
-  font-size: 16px;
+  font-size: 32rpx;
   font-weight: bold;
-  border-radius: 8px;
+  border-radius: 16rpx;
   border: none;
+  line-height: 96rpx;
 }

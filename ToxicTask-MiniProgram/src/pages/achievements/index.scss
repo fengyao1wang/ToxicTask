@@ -1,82 +1,83 @@
 .achievements-container {
   min-height: 100vh;
   background: linear-gradient(180deg, #1a1a1a 0%, #0a0a0a 100%);
-  padding: 40px 32px;
+  padding: 60rpx 48rpx;
+  box-sizing: border-box;
 }
 
 /* 顶部统计 */
 .achievements-header {
   text-align: center;
-  margin-bottom: 48px;
+  margin-bottom: 72rpx;
 }
 
 .achievements-title {
-  font-size: 48px;
+  font-size: 72rpx;
   font-weight: bold;
   color: #ffffff;
-  margin-bottom: 24px;
+  margin-bottom: 36rpx;
 }
 
 .achievements-stats {
   display: flex;
   align-items: baseline;
   justify-content: center;
-  margin-bottom: 16px;
+  margin-bottom: 24rpx;
 }
 
 .stats-unlocked {
-  font-size: 72px;
+  font-size: 108rpx;
   font-weight: bold;
   color: #00ff88;
   line-height: 1;
 }
 
 .stats-separator {
-  font-size: 48px;
+  font-size: 72rpx;
   color: #666666;
-  margin: 0 8px;
+  margin: 0 12rpx;
 }
 
 .stats-total {
-  font-size: 48px;
+  font-size: 72rpx;
   color: #666666;
   line-height: 1;
 }
 
 .achievements-subtitle {
-  font-size: 28px;
+  font-size: 42rpx;
   color: #888888;
 }
 
 /* 成就分组 */
 .achievements-section {
-  margin-bottom: 48px;
+  margin-bottom: 72rpx;
 }
 
 .section-title {
-  font-size: 32px;
+  font-size: 48rpx;
   font-weight: bold;
   color: #ffffff;
-  margin-bottom: 24px;
+  margin-bottom: 36rpx;
 }
 
 /* 成就列表 */
 .achievements-list {
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 24rpx;
 }
 
 /* 成就卡片 */
 .achievement-card {
   background: #1f1f1f;
-  border-radius: 24px;
-  padding: 32px;
+  border-radius: 36rpx;
+  padding: 48rpx;
   display: flex;
   align-items: flex-start;
-  gap: 24px;
+  gap: 36rpx;
   position: relative;
-  border: 2px solid transparent;
+  border: 3rpx solid transparent;
   transition: all 0.3s ease;
 }
 
@@ -92,15 +93,15 @@
 
 /* 成就图标 */
 .achievement-icon {
-  font-size: 64px;
+  font-size: 96rpx;
   flex-shrink: 0;
-  width: 80px;
-  height: 80px;
+  width: 120rpx;
+  height: 120rpx;
   display: flex;
   align-items: center;
   justify-content: center;
   background: rgba(0, 255, 136, 0.1);
-  border-radius: 20px;
+  border-radius: 30rpx;
 }
 
 .achievement-icon.locked-icon {
@@ -114,24 +115,24 @@
 }
 
 .achievement-title {
-  font-size: 32px;
+  font-size: 48rpx;
   font-weight: bold;
   color: #ffffff;
-  margin-bottom: 8px;
+  margin-bottom: 12rpx;
 }
 
 .achievement-description {
-  font-size: 26px;
+  font-size: 39rpx;
   color: #888888;
-  margin-bottom: 12px;
+  margin-bottom: 18rpx;
   line-height: 1.4;
 }
 
 .achievement-reward {
-  font-size: 28px;
+  font-size: 42rpx;
   font-weight: bold;
   color: #00ff88;
-  margin-bottom: 8px;
+  margin-bottom: 12rpx;
 }
 
 .achievement-card.locked .achievement-reward {
@@ -139,24 +140,24 @@
 }
 
 .achievement-date {
-  font-size: 24px;
+  font-size: 36rpx;
   color: #666666;
-  margin-top: 8px;
+  margin-top: 12rpx;
 }
 
 /* 成就徽章 */
 .achievement-badge {
   position: absolute;
-  top: 16px;
-  right: 16px;
-  width: 48px;
-  height: 48px;
+  top: 24rpx;
+  right: 24rpx;
+  width: 72rpx;
+  height: 72rpx;
   background: #00ff88;
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 28px;
+  font-size: 42rpx;
   color: #000000;
   font-weight: bold;
 }
@@ -168,16 +169,18 @@
 /* 领取按钮 */
 .claim-button {
   position: absolute;
-  top: 16px;
-  right: 16px;
+  top: 24rpx;
+  right: 24rpx;
   background: #ff3b30 !important;
   color: #ffffff !important;
-  font-size: 24px !important;
+  font-size: 36rpx !important;
   font-weight: bold;
-  border-radius: 12px;
+  border-radius: 18rpx;
   border: none;
-  padding: 8px 24px !important;
-  min-width: 100px;
+  padding: 12rpx 36rpx !important;
+  min-width: 150rpx;
+  height: 60rpx;
+  line-height: 60rpx;
 }
 
 .claim-button:active {
@@ -186,41 +189,41 @@
 
 /* 领取时间 */
 .achievement-claimed-date {
-  font-size: 22px;
+  font-size: 33rpx;
   color: #00ff88;
-  margin-top: 4px;
+  margin-top: 6rpx;
 }
 
 /* 进度条 */
 .progress-bar {
   width: 100%;
-  height: 8px;
+  height: 12rpx;
   background: #2a2a2a;
-  border-radius: 4px;
+  border-radius: 6rpx;
   overflow: hidden;
-  margin-top: 12px;
+  margin-top: 18rpx;
 }
 
 .progress-fill {
   height: 100%;
   background: linear-gradient(90deg, #00ff88 0%, #00cc6a 100%);
-  border-radius: 4px;
+  border-radius: 6rpx;
   transition: width 0.3s ease;
 }
 
 .progress-text {
-  font-size: 24px;
+  font-size: 36rpx;
   color: #666666;
-  margin-top: 8px;
+  margin-top: 12rpx;
 }
 
 /* 空状态 */
 .empty-state {
   text-align: center;
-  padding: 120px 32px;
+  padding: 180rpx 48rpx;
 }
 
 .empty-text {
-  font-size: 28px;
+  font-size: 42rpx;
   color: #666666;
 }

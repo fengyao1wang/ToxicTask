@@ -1,33 +1,34 @@
 .profile-container {
   min-height: 100vh;
   background-color: #0a0a0a;
-  padding: 20px;
+  padding: 30rpx;
+  box-sizing: border-box;
 }
 
 .profile-header {
   text-align: center;
-  margin-bottom: 40px;
+  margin-bottom: 60rpx;
 }
 
 .avatar {
-  width: 80px;
-  height: 80px;
+  width: 140rpx;
+  height: 140rpx;
   background: linear-gradient(135deg, #ff3b30, #ff6b30);
   border-radius: 50%;
-  margin: 0 auto 15px;
+  margin: 0 auto 24rpx;
   display: flex;
   align-items: center;
   justify-content: center;
 }
 
 .avatar-text {
-  font-size: 36px;
+  font-size: 60rpx;
   font-weight: bold;
   color: #fff;
 }
 
 .username {
-  font-size: 24px;
+  font-size: 40rpx;
   font-weight: bold;
   color: #fff;
   display: block;
@@ -35,58 +36,58 @@
 
 .coins-section {
   background-color: #1a1a1a;
-  border: 2px solid #00ff00;
-  border-radius: 16px;
-  padding: 30px 20px;
+  border: 3rpx solid #00ff00;
+  border-radius: 24rpx;
+  padding: 48rpx 32rpx;
   text-align: center;
-  margin-bottom: 30px;
+  margin-bottom: 40rpx;
 }
 
 .coins-label {
-  font-size: 14px;
+  font-size: 28rpx;
   color: #999;
   display: block;
-  margin-bottom: 10px;
+  margin-bottom: 16rpx;
 }
 
 .coins-value {
-  font-size: 48px;
+  font-size: 80rpx;
   font-weight: bold;
   color: #00ff00;
   display: block;
-  margin-bottom: 10px;
+  margin-bottom: 16rpx;
 }
 
 .coins-hint {
-  font-size: 12px;
+  font-size: 24rpx;
   color: #666;
   display: block;
 }
 
 /* 获取尊严币入口 */
 .earn-coins-section {
-  margin-bottom: 30px;
+  margin-bottom: 40rpx;
 }
 
 .section-title {
-  font-size: 18px;
+  font-size: 32rpx;
   font-weight: bold;
   color: #fff;
   display: block;
-  margin-bottom: 15px;
+  margin-bottom: 24rpx;
 }
 
 .earn-coins-grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  gap: 12px;
+  gap: 20rpx;
 }
 
 .earn-coin-card {
   background-color: #1a1a1a;
-  border: 2px solid #333;
-  border-radius: 12px;
-  padding: 20px 15px;
+  border: 3rpx solid #333;
+  border-radius: 16rpx;
+  padding: 32rpx 24rpx;
   text-align: center;
   transition: all 0.3s ease;
 }
@@ -102,21 +103,21 @@
 }
 
 .earn-coin-icon {
-  font-size: 32px;
+  font-size: 56rpx;
   display: block;
-  margin-bottom: 8px;
+  margin-bottom: 12rpx;
 }
 
 .earn-coin-title {
-  font-size: 14px;
+  font-size: 28rpx;
   font-weight: bold;
   color: #fff;
   display: block;
-  margin-bottom: 5px;
+  margin-bottom: 8rpx;
 }
 
 .earn-coin-reward {
-  font-size: 12px;
+  font-size: 24rpx;
   color: #00ff88;
   display: block;
 }
@@ -127,29 +128,29 @@
 
 .stats-section {
   display: flex;
-  gap: 10px;
-  margin-bottom: 30px;
+  gap: 16rpx;
+  margin-bottom: 40rpx;
 }
 
 .stat-card {
   flex: 1;
   background-color: #1a1a1a;
   border: 1px solid #333;
-  border-radius: 12px;
-  padding: 20px 10px;
+  border-radius: 16rpx;
+  padding: 32rpx 16rpx;
   text-align: center;
 }
 
 .stat-value {
-  font-size: 24px;
+  font-size: 40rpx;
   font-weight: bold;
   color: #fff;
   display: block;
-  margin-bottom: 5px;
+  margin-bottom: 8rpx;
 }
 
 .stat-label {
-  font-size: 12px;
+  font-size: 24rpx;
   color: #999;
   display: block;
 }
@@ -157,15 +158,15 @@
 .info-section {
   background-color: #1a1a1a;
   border: 1px solid #333;
-  border-radius: 12px;
-  padding: 20px;
-  margin-bottom: 30px;
+  border-radius: 16rpx;
+  padding: 32rpx;
+  margin-bottom: 40rpx;
 }
 
 .info-item {
   display: flex;
   justify-content: space-between;
-  padding: 12px 0;
+  padding: 20rpx 0;
   border-bottom: 1px solid #333;
 }
 
@@ -174,23 +175,24 @@
 }
 
 .info-label {
-  font-size: 14px;
+  font-size: 28rpx;
   color: #999;
 }
 
 .info-value {
-  font-size: 14px;
+  font-size: 28rpx;
   color: #fff;
 }
 
 .logout-button {
   width: 100%;
-  height: 48px;
+  height: 88rpx;
   background-color: #333;
   color: #fff;
-  font-size: 16px;
-  border-radius: 8px;
+  font-size: 32rpx;
+  border-radius: 16rpx;
   border: none;
+  line-height: 88rpx;
 }
 
 .logout-button:active {

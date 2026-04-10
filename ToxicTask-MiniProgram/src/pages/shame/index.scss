@@ -1,24 +1,25 @@
 .shame-container {
   min-height: 100vh;
   background-color: #0a0a0a;
-  padding: 20px;
-  padding-bottom: 80px;
+  padding: 30rpx;
+  padding-bottom: 120rpx;
+  box-sizing: border-box;
 }
 
 .header {
-  margin-bottom: 20px;
+  margin-bottom: 30rpx;
 }
 
 .header-title {
-  font-size: 28px;
+  font-size: 44rpx;
   font-weight: bold;
   color: #ff3b30;
   display: block;
-  margin-bottom: 8px;
+  margin-bottom: 12rpx;
 }
 
 .header-subtitle {
-  font-size: 14px;
+  font-size: 28rpx;
   color: #666;
   display: block;
 }
@@ -27,18 +28,18 @@
 .tab-bar {
   display: flex;
   background-color: #1a1a1a;
-  border-radius: 8px;
-  margin-bottom: 20px;
-  padding: 4px;
+  border-radius: 12rpx;
+  margin-bottom: 30rpx;
+  padding: 8rpx;
 }
 
 .tab-item {
   flex: 1;
-  height: 40px;
+  height: 72rpx;
   display: flex;
   align-items: center;
   justify-content: center;
-  border-radius: 6px;
+  border-radius: 10rpx;
   cursor: pointer;
 }
 
@@ -47,7 +48,7 @@
 }
 
 .tab-text {
-  font-size: 14px;
+  font-size: 28rpx;
   color: #999;
 }
 
@@ -59,25 +60,25 @@
 .loading-text {
   text-align: center;
   color: #666;
-  font-size: 14px;
+  font-size: 28rpx;
   display: block;
-  margin-top: 40px;
+  margin-top: 60rpx;
 }
 
 .empty-state {
   text-align: center;
-  margin-top: 60px;
+  margin-top: 100rpx;
 }
 
 .empty-text {
-  font-size: 18px;
+  font-size: 36rpx;
   color: #666;
   display: block;
-  margin-bottom: 10px;
+  margin-bottom: 16rpx;
 }
 
 .empty-hint {
-  font-size: 14px;
+  font-size: 28rpx;
   color: #444;
   display: block;
 }
@@ -85,48 +86,48 @@
 .shame-card {
   background-color: #1a1a1a;
   border: 1px solid #333;
-  border-left: 4px solid #ff3b30;
-  border-radius: 12px;
-  padding: 16px;
-  margin-bottom: 12px;
+  border-left: 6rpx solid #ff3b30;
+  border-radius: 16rpx;
+  padding: 24rpx;
+  margin-bottom: 20rpx;
 }
 
 .shame-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 12px;
+  margin-bottom: 16rpx;
 }
 
 .shame-task-title {
-  font-size: 16px;
+  font-size: 32rpx;
   font-weight: bold;
   color: #fff;
   flex: 1;
 }
 
 .shame-date {
-  font-size: 12px;
+  font-size: 24rpx;
   color: #666;
 }
 
 .shame-comment {
   background-color: #0a0a0a;
-  border-radius: 8px;
-  padding: 12px;
-  margin-bottom: 12px;
+  border-radius: 12rpx;
+  padding: 20rpx;
+  margin-bottom: 16rpx;
   display: flex;
   align-items: flex-start;
 }
 
 .comment-icon {
-  font-size: 20px;
-  margin-right: 8px;
+  font-size: 36rpx;
+  margin-right: 12rpx;
 }
 
 .comment-text {
   flex: 1;
-  font-size: 14px;
+  font-size: 28rpx;
   color: #ff3b30;
   line-height: 1.5;
 }
@@ -134,28 +135,28 @@
 /* 监督者评论 */
 .supervisor-comment {
   background-color: rgba(255, 59, 48, 0.1);
-  border-left: 3px solid #ff3b30;
-  border-radius: 6px;
-  padding: 10px;
-  margin-bottom: 12px;
+  border-left: 5rpx solid #ff3b30;
+  border-radius: 10rpx;
+  padding: 16rpx;
+  margin-bottom: 16rpx;
 }
 
 .supervisor-label {
-  font-size: 12px;
+  font-size: 24rpx;
   color: #ff6b6b;
   display: block;
-  margin-bottom: 6px;
+  margin-bottom: 10rpx;
 }
 
 .supervisor-text {
-  font-size: 13px;
+  font-size: 26rpx;
   color: #fff;
   line-height: 1.5;
   display: block;
 }
 
 .shame-bet {
-  font-size: 12px;
+  font-size: 24rpx;
   color: #666;
   display: block;
 }

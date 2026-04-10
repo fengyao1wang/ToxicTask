@@ -1,14 +1,14 @@
 .social-container {
   min-height: 100vh;
   background-color: #0a0a0a;
-  padding-bottom: 80px;
+  padding-bottom: 120rpx;
 }
 
 /* Tab切换栏 */
 .tab-bar {
   display: flex;
   background-color: #1a1a1a;
-  border-bottom: 1px solid #333;
+  border-bottom: 2rpx solid #333;
   position: sticky;
   top: 0;
   z-index: 100;
@@ -16,7 +16,7 @@
 
 .tab-item {
   flex: 1;
-  height: 50px;
+  height: 88rpx;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -25,11 +25,11 @@
 }
 
 .tab-item.active {
-  border-bottom: 3px solid #ff3b30;
+  border-bottom: 5rpx solid #ff3b30;
 }
 
 .tab-text {
-  font-size: 16px;
+  font-size: 32rpx;
   color: #999;
 }
 
@@ -40,44 +40,44 @@
 
 .badge {
   position: absolute;
-  top: 8px;
-  right: 20px;
+  top: 12rpx;
+  right: 32rpx;
   background-color: #ff3b30;
-  border-radius: 10px;
-  min-width: 20px;
-  height: 20px;
+  border-radius: 20rpx;
+  min-width: 36rpx;
+  height: 36rpx;
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 0 6px;
+  padding: 0 10rpx;
 }
 
 .badge-text {
-  font-size: 12px;
+  font-size: 24rpx;
   color: #fff;
   font-weight: bold;
 }
 
 /* 内容区域 */
 .content-section {
-  padding: 20px;
+  padding: 30rpx;
 }
 
 /* 空状态 */
 .empty-state {
   text-align: center;
-  margin-top: 80px;
+  margin-top: 120rpx;
 }
 
 .empty-text {
-  font-size: 18px;
+  font-size: 36rpx;
   color: #666;
   display: block;
-  margin-bottom: 10px;
+  margin-bottom: 16rpx;
 }
 
 .empty-hint {
-  font-size: 14px;
+  font-size: 28rpx;
   color: #444;
   display: block;
 }
@@ -86,84 +86,85 @@
 .task-list {
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 24rpx;
 }
 
 /* 审核卡片 */
 .review-card {
   background-color: #1a1a1a;
-  border: 2px solid #ff3b30;
-  border-radius: 12px;
-  padding: 16px;
-  box-shadow: 0 0 15px rgba(255, 59, 48, 0.2);
+  border: 3rpx solid #ff3b30;
+  border-radius: 16rpx;
+  padding: 24rpx;
+  box-shadow: 0 0 24rpx rgba(255, 59, 48, 0.2);
 }
 
 .card-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 16px;
+  margin-bottom: 24rpx;
 }
 
 .task-title {
-  font-size: 18px;
+  font-size: 32rpx;
   font-weight: bold;
   color: #fff;
   flex: 1;
 }
 
 .task-bet {
-  font-size: 16px;
+  font-size: 32rpx;
   font-weight: bold;
   color: #ff3b30;
-  margin-left: 12px;
+  margin-left: 20rpx;
 }
 
 /* 证据展示 */
 .evidence-section {
-  margin-bottom: 16px;
+  margin-bottom: 24rpx;
 }
 
 .evidence-label {
-  font-size: 13px;
+  font-size: 26rpx;
   color: #999;
   display: block;
-  margin-bottom: 8px;
+  margin-bottom: 12rpx;
 }
 
 .evidence-image {
   width: 100%;
-  max-height: 300px;
-  border-radius: 8px;
+  max-height: 500rpx;
+  border-radius: 12rpx;
   background-color: #2a2a2a;
 }
 
 .evidence-text {
-  font-size: 14px;
+  font-size: 28rpx;
   color: #fff;
   line-height: 1.6;
   display: block;
-  padding: 12px;
+  padding: 20rpx;
   background-color: #2a2a2a;
-  border-radius: 8px;
+  border-radius: 12rpx;
 }
 
 /* 审核按钮 */
 .review-actions {
   display: flex;
-  gap: 12px;
-  margin-bottom: 12px;
+  gap: 20rpx;
+  margin-bottom: 20rpx;
 }
 
 .reject-btn {
   flex: 1;
-  height: 44px;
+  height: 80rpx;
   background-color: #333 !important;
   color: #fff !important;
-  font-size: 15px !important;
+  font-size: 30rpx !important;
   font-weight: bold;
-  border-radius: 8px;
-  border: 2px solid #666;
+  border-radius: 12rpx;
+  border: 3rpx solid #666;
+  line-height: 80rpx;
 }
 
 .reject-btn:active {
@@ -172,13 +173,14 @@
 
 .approve-btn {
   flex: 1;
-  height: 44px;
+  height: 80rpx;
   background-color: #00ff88 !important;
   color: #000 !important;
-  font-size: 15px !important;
+  font-size: 30rpx !important;
   font-weight: bold;
-  border-radius: 8px;
+  border-radius: 12rpx;
   border: none;
+  line-height: 80rpx;
 }
 
 .approve-btn:active {
@@ -187,14 +189,14 @@
 
 /* 奖励提示 */
 .reward-hint {
-  padding: 8px;
+  padding: 12rpx;
   background-color: rgba(255, 59, 48, 0.1);
-  border-radius: 6px;
+  border-radius: 10rpx;
   text-align: center;
 }
 
 .hint-text {
-  font-size: 12px;
+  font-size: 24rpx;
   color: #ff6b6b;
 }
 
@@ -202,8 +204,8 @@
 .contract-card {
   background-color: #1a1a1a;
   border: 1px solid #333;
-  border-radius: 12px;
-  padding: 16px;
+  border-radius: 16rpx;
+  padding: 24rpx;
   cursor: pointer;
 }
 
@@ -212,66 +214,66 @@
 }
 
 .status-badge {
-  padding: 4px 12px;
-  border-radius: 12px;
-  margin-left: 12px;
+  padding: 8rpx 20rpx;
+  border-radius: 20rpx;
+  margin-left: 20rpx;
 }
 
 .status-badge.status-success {
   background-color: rgba(0, 255, 136, 0.2);
-  border: 1px solid #00ff88;
+  border: 2rpx solid #00ff88;
 }
 
 .status-badge.status-failed {
   background-color: rgba(255, 59, 48, 0.2);
-  border: 1px solid #ff3b30;
+  border: 2rpx solid #ff3b30;
 }
 
 .status-badge.status-pending {
   background-color: rgba(255, 149, 0, 0.2);
-  border: 1px solid #ff9500;
+  border: 2rpx solid #ff9500;
 }
 
 .status-badge.status-normal {
   background-color: rgba(102, 102, 102, 0.2);
-  border: 1px solid #666;
+  border: 2rpx solid #666;
 }
 
 .status-text {
-  font-size: 12px;
+  font-size: 24rpx;
   font-weight: bold;
   color: #fff;
 }
 
 .card-info {
   display: flex;
-  gap: 16px;
-  margin-bottom: 12px;
+  gap: 24rpx;
+  margin-bottom: 20rpx;
 }
 
 .info-item {
-  font-size: 14px;
+  font-size: 28rpx;
   color: #999;
 }
 
 /* 监督者评论 */
 .supervisor-comment {
-  padding: 12px;
+  padding: 20rpx;
   background-color: rgba(255, 59, 48, 0.1);
-  border-left: 3px solid #ff3b30;
-  border-radius: 6px;
-  margin-bottom: 12px;
+  border-left: 5rpx solid #ff3b30;
+  border-radius: 10rpx;
+  margin-bottom: 20rpx;
 }
 
 .comment-label {
-  font-size: 12px;
+  font-size: 24rpx;
   color: #ff6b6b;
   display: block;
-  margin-bottom: 6px;
+  margin-bottom: 10rpx;
 }
 
 .comment-text {
-  font-size: 14px;
+  font-size: 28rpx;
   color: #fff;
   line-height: 1.5;
   display: block;
@@ -282,7 +284,7 @@
 }
 
 .footer-hint {
-  font-size: 13px;
+  font-size: 26rpx;
   color: #666;
 }
 
@@ -303,54 +305,57 @@
 .modal-content {
   width: 80%;
   background-color: #1a1a1a;
-  border: 2px solid #ff3b30;
-  border-radius: 12px;
-  padding: 20px;
+  border: 3rpx solid #ff3b30;
+  border-radius: 16rpx;
+  padding: 32rpx;
 }
 
 .modal-title {
-  font-size: 18px;
+  font-size: 32rpx;
   font-weight: bold;
   color: #fff;
   display: block;
-  margin-bottom: 16px;
+  margin-bottom: 24rpx;
   text-align: center;
 }
 
 .comment-textarea {
   width: 100%;
-  min-height: 100px;
+  min-height: 180rpx;
   background-color: #2a2a2a;
-  border: 1px solid #444;
-  border-radius: 8px;
-  padding: 12px;
-  font-size: 14px;
+  border: 2rpx solid #444;
+  border-radius: 12rpx;
+  padding: 20rpx;
+  font-size: 28rpx;
   color: #fff;
-  margin-bottom: 16px;
+  margin-bottom: 24rpx;
+  box-sizing: border-box;
 }
 
 .modal-actions {
   display: flex;
-  gap: 12px;
+  gap: 20rpx;
 }
 
 .cancel-btn {
   flex: 1;
-  height: 44px;
+  height: 80rpx;
   background-color: #333 !important;
   color: #fff !important;
-  font-size: 15px !important;
-  border-radius: 8px;
+  font-size: 30rpx !important;
+  border-radius: 12rpx;
   border: none;
+  line-height: 80rpx;
 }
 
 .confirm-btn {
   flex: 1;
-  height: 44px;
+  height: 80rpx;
   background-color: #ff3b30 !important;
   color: #fff !important;
-  font-size: 15px !important;
+  font-size: 30rpx !important;
   font-weight: bold;
-  border-radius: 8px;
+  border-radius: 12rpx;
   border: none;
+  line-height: 80rpx;
 }
