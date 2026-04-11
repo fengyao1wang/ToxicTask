@@ -252,9 +252,6 @@ const getInvitesData = (userId: string) => {
 };
 
 export const useAchievementStore = create<AchievementState>((set, get) => {
-  // 初始化成就列表
-  initAchievements();
-
   return {
     achievements: PRESET_ACHIEVEMENTS,
     userAchievements: [],
