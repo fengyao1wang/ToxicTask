@@ -8,10 +8,15 @@ const SUPABASE_URL = process.env.TARO_APP_SUPABASE_URL || '';
 const SUPABASE_ANON_KEY = process.env.TARO_APP_SUPABASE_ANON_KEY || '';
 const WECHAT_LOGIN_FUNCTION = SUPABASE_URL ? `${SUPABASE_URL}/functions/v1/wechat-login` : '';
 
-// 初始化 Supabase 客户端
-const supabase = SUPABASE_URL && SUPABASE_ANON_KEY
-  ? createClient(SUPABASE_URL, SUPABASE_ANON_KEY)
-  : null;
+// 延迟初始化 Supabase 客户端（避免小程序环境中 Headers API 不存在的问题）
+let supabase: ReturnType<typeof createClient> | null = null;
+
+function getSupabaseClient() {
+  if (!supabase && SUPABASE_URL && SUPABASE_ANON_KEY) {
+    supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+  }
+  return supabase;
+}
 
 interface WechatLoginUser {
   id: string;
@@ -31,7 +36,8 @@ interface WechatLoginUser {
  * 使用存储的 session 中的 user_id 作为 RLS 依据
  */
 export function getAuthenticatedSupabaseClient() {
-  if (!supabase) {
+  const client = getSupabaseClient();
+  if (!client) {
     throw new Error('Supabase 未初始化');
   }
 
@@ -43,7 +49,7 @@ export function getAuthenticatedSupabaseClient() {
       // 注意：RLS 策略会基于 stored procedure 或 JWT claims 中的 user_id 进行验证
       // 这里我们返回原始的 supabase 客户端，它会使用 anon key
       // 但由于 auth.users 表中已创建了用户，RLS 会认识这个 user_id
-      return supabase;
+      return client;
     }
   } catch (error) {
     console.error('[Auth] Failed to get session:', error);
@@ -54,7 +60,8 @@ export function getAuthenticatedSupabaseClient() {
 
 export const authApi = {
   async signInWithWechat(code: string, nickname?: string, avatarUrl?: string) {
-    if (!WECHAT_LOGIN_FUNCTION || !supabase) {
+    const supabaseClient = getSupabaseClient();
+    if (!WECHAT_LOGIN_FUNCTION || !supabaseClient) {
       throw new Error('缺少 Supabase 配置（TARO_APP_SUPABASE_URL 或 TARO_APP_SUPABASE_ANON_KEY）');
     }
 
