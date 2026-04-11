@@ -1,7 +1,6 @@
 import { create } from 'zustand';
 import Taro from '@tarojs/taro';
 import { Achievement, UserAchievement, STORAGE_KEYS } from '../../types';
-import { useCoinStore } from './coinStore';
 
 interface AchievementState {
   achievements: Achievement[];
@@ -394,6 +393,7 @@ export const useAchievementStore = create<AchievementState>((set, get) => {
         }
 
         // 发放奖励
+        const { useCoinStore } = await import('./coinStore');
         await useCoinStore.getState().addTransaction(
           userId,
           'achievement',
@@ -412,10 +412,11 @@ export const useAchievementStore = create<AchievementState>((set, get) => {
         // 更新状态
         set({ userAchievements: [...userAchievements] });
 
+        const { useCoinStore: coinStore } = await import('./coinStore');
         console.log('[AchievementStore][Info] 成就奖励已领取:', {
           title: achievement.title,
           coins_reward: achievement.coins_reward,
-          new_balance: useCoinStore.getState().getBalance(userId),
+          new_balance: coinStore.getState().getBalance(userId),
         });
 
         // 显示领取成功提示
