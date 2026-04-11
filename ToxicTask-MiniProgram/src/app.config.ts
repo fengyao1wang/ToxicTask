@@ -1,4 +1,4 @@
-export default defineAppConfig({
+export default {
   pages: [
     'pages/index/index',
     'pages/auth/index',
@@ -40,8 +40,8 @@ export default defineAppConfig({
   window: {
     backgroundTextStyle: 'light',
     navigationBarBackgroundColor: '#1a1a1a',
-    navigationBarTitleText: 'ToxicTask',
+    navigationBarTitleText: '今天又鸽了',
     navigationBarTextStyle: 'white',
     backgroundColor: '#0a0a0a'
   }
-})
+}
