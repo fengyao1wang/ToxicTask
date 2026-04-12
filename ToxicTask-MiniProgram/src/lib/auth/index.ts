@@ -2,9 +2,9 @@ import Taro from '@tarojs/taro';
 import { STORAGE_KEYS } from '@/types';
 import { migrateLegacyLocalData } from './migration';
 
-// @ts-ignore - Taro 编译时注入的环境变量
-const SUPABASE_URL = process.env.TARO_APP_SUPABASE_URL || '';
-const SUPABASE_ANON_KEY = process.env.TARO_APP_SUPABASE_ANON_KEY || '';
+// 安全访问 process.env（小程序环境中 process 可能未定义）
+const SUPABASE_URL = (typeof process !== 'undefined' && process.env?.TARO_APP_SUPABASE_URL) ? process.env.TARO_APP_SUPABASE_URL : '';
+const SUPABASE_ANON_KEY = (typeof process !== 'undefined' && process.env?.TARO_APP_SUPABASE_ANON_KEY) ? process.env.TARO_APP_SUPABASE_ANON_KEY : '';
 const WECHAT_LOGIN_FUNCTION = SUPABASE_URL ? `${SUPABASE_URL}/functions/v1/wechat-login` : '';
 
 interface WechatLoginUser {
