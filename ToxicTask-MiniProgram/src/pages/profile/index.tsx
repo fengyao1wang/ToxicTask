@@ -2,11 +2,13 @@ import { useEffect, useState } from 'react';
 import { View, Text, Button } from '@tarojs/components';
 import Taro from '@tarojs/taro';
 import { useAppStore } from '@/lib/stores/appStore';
+import { useTaskStore } from '@/lib/stores/taskStore';
 import { authApi } from '@/lib/auth';
 import './index.scss';
 
 export default function Profile() {
   const { user, profile, setUser, setProfile } = useAppStore();
+  const { tasks } = useTaskStore();
   const [loading, setLoading] = useState(false);
 
   const handleLogout = async () => {
@@ -101,15 +103,15 @@ export default function Profile() {
 
       <View className='stats-section'>
         <View className='stat-card'>
-          <Text className='stat-value'>0</Text>
+          <Text className='stat-value'>{tasks.filter((t) => t.status === 'completed').length}</Text>
           <Text className='stat-label'>已完成</Text>
         </View>
         <View className='stat-card'>
-          <Text className='stat-value'>0</Text>
+          <Text className='stat-value'>{tasks.filter((t) => t.status === 'pending').length}</Text>
           <Text className='stat-label'>进行中</Text>
         </View>
         <View className='stat-card'>
-          <Text className='stat-value'>0</Text>
+          <Text className='stat-value'>{tasks.filter((t) => t.status === 'failed').length}</Text>
           <Text className='stat-label'>已失败</Text>
         </View>
       </View>
