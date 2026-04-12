@@ -25,6 +25,13 @@ export const authApi = {
     }
 
     try {
+      console.log('[Auth][Debug] 发送微信登录请求:', {
+        url: WECHAT_LOGIN_FUNCTION,
+        code: code?.substring(0, 10) + '...' || 'null',
+        nickname,
+        avatar_url: avatarUrl,
+      });
+
       const response = await Taro.request<{ user: WechatLoginUser; session_key: string }>({
         url: WECHAT_LOGIN_FUNCTION,
         method: 'POST',
@@ -36,6 +43,11 @@ export const authApi = {
         header: {
           'Content-Type': 'application/json',
         },
+      });
+
+      console.log('[Auth][Debug] 微信登录响应:', {
+        statusCode: response.statusCode,
+        data: response.data,
       });
 
       if (response.statusCode < 200 || response.statusCode >= 300 || !response.data?.user) {
