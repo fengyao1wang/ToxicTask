@@ -66,13 +66,12 @@ export default function Auth() {
         <View className='wechat-login-section'>
           <Text className='login-hint'>使用微信账号登录</Text>
 
-          <Button
+          <View
             className={`wechat-login-button ${loading ? 'disabled' : ''}`}
             onClick={handleWechatLogin}
-            disabled={loading}
           >
             {loading ? '登录中...' : '微信授权登录'}
-          </Button>
+          </View>
 
           {error && <Text className='error-message'>{error}</Text>}
         </View>

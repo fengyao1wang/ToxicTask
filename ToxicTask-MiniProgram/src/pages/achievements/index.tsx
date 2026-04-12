@@ -129,13 +129,12 @@ export default function Achievements() {
                   {isClaimed ? (
                     <View className="achievement-badge claimed">✓</View>
                   ) : (
-                    <Button
+                    <View
                       className="claim-button"
-                      size="mini"
                       onClick={() => handleClaimReward(achievement.id)}
                     >
                       领取
-                    </Button>
+                    </View>
                   )}
                 </View>
               );

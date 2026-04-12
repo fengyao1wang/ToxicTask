@@ -242,13 +242,12 @@ export default function CreateTask() {
         </Text>
       </View>
 
-      <Button
+      <View
         className={`submit-button ${loading || !betAmount ? 'disabled' : ''}`}
         onClick={handleCreate}
-        disabled={loading || !betAmount}
       >
         {loading ? '处理中...' : '下一步：设置契约'}
-      </Button>
+      </View>
     </View>
   );
 }
