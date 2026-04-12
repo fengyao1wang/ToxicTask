@@ -50,6 +50,10 @@
   font-weight: bold;
   border-radius: 8px;
   border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
 }
 
 .wechat-login-button:active {

@@ -74,7 +74,7 @@
 /* 红黑警示区 */
 .danger-zone {
   background: linear-gradient(135deg, #1a0000 0%, #330000 100%);
-  border: 3rpx solid #ffdd00;
+  border: 3rpx solid #999999;
   border-radius: 16rpx;
   padding: 32rpx;
   margin-bottom: 30rpx;
@@ -84,7 +84,7 @@
 .danger-title {
   font-size: 36rpx;
   font-weight: bold;
-  color: #ffdd00;
+  color: #999999;
   display: block;
   margin-bottom: 20rpx;
   text-align: center;
@@ -155,7 +155,7 @@
 .bounty-value {
   font-size: 32rpx;
   font-weight: bold;
-  color: #ffdd00;
+  color: #999999;
   text-align: center;
   display: block;
   margin-top: 8rpx;
@@ -190,7 +190,7 @@
 
 .visibility-option.active {
   background-color: rgba(255, 221, 0, 0.1);
-  border-color: #ffdd00;
+  border-color: #999999;
 }
 
 .option-text {
@@ -210,7 +210,7 @@
 /* 总花费 */
 .total-cost {
   background-color: rgba(255, 221, 0, 0.1);
-  border: 2rpx solid #ffdd00;
+  border: 2rpx solid #999999;
   border-radius: 12rpx;
   padding: 20rpx;
   margin-bottom: 30rpx;
@@ -229,7 +229,7 @@
 .cost-value {
   font-size: 40rpx;
   font-weight: bold;
-  color: #ffdd00;
+  color: #999999;
 }
 
 .cost-detail {

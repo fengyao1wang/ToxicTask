@@ -160,7 +160,10 @@
   font-weight: bold;
   border-radius: 16rpx;
   border: none;
-  line-height: 96rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
 }
 
 .submit-button.disabled {
@@ -188,8 +191,8 @@
 }
 
 .type-option.active {
-  background-color: #00ff88;
-  border-color: #00ff88;
+  background-color: #ffffff;
+  border-color: #ffffff;
 }
 
 .type-option.active .type-text {
@@ -223,8 +226,8 @@
 }
 
 .repeat-option.active {
-  background-color: #00ff88;
-  border-color: #00ff88;
+  background-color: #ffffff;
+  border-color: #ffffff;
 }
 
 .repeat-option.active .repeat-text {
@@ -283,7 +286,7 @@
 
 .hint-text {
   font-size: 28rpx;
-  color: #00ff88;
+  color: #ffffff;
   line-height: 1.5;
   display: block;
 }
@@ -374,7 +377,7 @@
 .rules-title {
   display: block;
   font-size: 28rpx;
-  color: #00ff88;
+  color: #ffffff;
   font-weight: bold;
   margin-bottom: 12rpx;
 }
