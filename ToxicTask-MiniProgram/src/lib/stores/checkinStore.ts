@@ -1,7 +1,6 @@
 import { create } from 'zustand';
 import Taro from '@tarojs/taro';
 import { CheckInRecord, STORAGE_KEYS } from '../../types';
-import { useCoinStore } from './coinStore';
 
 interface CheckInState {
   checkInRecords: CheckInRecord[];
@@ -133,6 +132,7 @@ export const useCheckInStore = create<CheckInState>((set, get) => ({
       saveCheckInsToStorage(userId, checkInRecords);
 
       // 增加尊严币（通过 coinStore）
+      const { useCoinStore } = await import('./coinStore');
       await useCoinStore.getState().addTransaction(
         userId,
         'check_in',
