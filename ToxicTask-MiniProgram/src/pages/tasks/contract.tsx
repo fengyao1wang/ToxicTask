@@ -251,7 +251,7 @@ export default function SocialContractSetup() {
         <>
           {/* 红黑警示区 */}
           <View className='danger-zone'>
-            <Text className='danger-title'>⚠️ 严重警告</Text>
+            <Text className='danger-title'>⚠️ Flaked Again Warning</Text>
             <Text className='danger-text'>
               开启监督后，需提交证据由好友审核。若被拒绝，你的全部本金和赏金将扣除，好友还将获得你的 {Math.floor(betAmount * 0.5)} 币分红！
             </Text>

@@ -233,11 +233,11 @@ export default function CreateTask() {
 
       {/* 警告提示 */}
       <View className='warning-box'>
-        <Text className='warning-text'>⚠️ 警告</Text>
+        <Text className='warning-text'>⚠️ 注意</Text>
         <Text className='warning-desc'>
           {taskType === 'single'
-            ? `任务超时未完成将扣除 ${betAmount} 尊严币，并触发 AI 毒舌嘲讽，记录将公开至耻辱墙！`
-            : `任意一天未打卡将扣除 ${betAmount} 尊严币，并触发 AI 毒舌嘲讽，记录将公开至耻辱墙！`
+            ? `任务超时未完成将扣除 ${betAmount} 尊严币，记录将公开至耻辱墙！`
+            : `任意一天未打卡将扣除 ${betAmount} 尊严币，记录将公开至耻辱墙！`
           }
         </Text>
       </View>

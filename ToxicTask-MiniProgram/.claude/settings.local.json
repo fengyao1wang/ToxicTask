@@ -1,0 +1,20 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm run:*)",
+      "Bash(printf \"DIST_APP_JSON_EXISTS=yes\\\\n\")",
+      "Bash(printf \"DIST_APP_JSON_EXISTS=no\\\\n\")",
+      "Bash(git:*)",
+      "Bash(printf \"\\\\n---RECENT COMMITS---\\\\n\")",
+      "Bash(printf \"\\\\n---\\\\n\")",
+      "WebSearch",
+      "Bash(node:*)",
+      "Bash(printf \"✓ dist/app.json exists\\\\n\")",
+      "Bash(printf \"✗ dist/app.json NOT found\\\\n\")",
+      "Bash(printf \"✓ Build successful, app.json exists\\\\n\")",
+      "Bash(printf \"✗ Build failed\\\\n\")",
+      "Bash(printf \"✓ Build OK\\\\n\")",
+      "Bash(npm list:*)"
+    ]
+  }
+}

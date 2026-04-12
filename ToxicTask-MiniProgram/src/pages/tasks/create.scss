@@ -48,8 +48,12 @@
 }
 
 .bet-option.active {
-  background-color: #ff3b30;
-  border-color: #ff3b30;
+  background-color: #ffffff;
+  border-color: #ffffff;
+}
+
+.bet-option.active .bet-text {
+  color: #000000;
 }
 
 .bet-text {
@@ -80,7 +84,7 @@
 
 .slider-value {
   font-size: 36rpx;
-  color: #ff3b30;
+  color: #ffffff;
   font-weight: bold;
 }
 
@@ -99,7 +103,7 @@
 
 .time-value {
   font-size: 40rpx;
-  color: #ff3b30;
+  color: #ffffff;
   font-weight: bold;
 }
 
@@ -126,7 +130,7 @@
 
 .warning-box {
   background-color: #1a1a1a;
-  border: 2rpx solid #ff3b30;
+  border: 2rpx solid #ffffff;
   border-radius: 12rpx;
   padding: 24rpx;
   margin-bottom: 40rpx;
@@ -134,7 +138,7 @@
 
 .warning-text {
   font-size: 32rpx;
-  color: #ff3b30;
+  color: #ffffff;
   font-weight: bold;
   display: block;
   margin-bottom: 12rpx;
@@ -150,8 +154,8 @@
 .submit-button {
   width: 100%;
   height: 96rpx;
-  background-color: #ff3b30;
-  color: #fff;
+  background-color: #ffffff;
+  color: #000000;
   font-size: 32rpx;
   font-weight: bold;
   border-radius: 16rpx;
@@ -337,8 +341,8 @@
 }
 
 .bounty-option.active {
-  background-color: #ff3b30;
-  border-color: #ff3b30;
+  background-color: #ffffff;
+  border-color: #ffffff;
 }
 
 .bounty-text {
@@ -356,7 +360,7 @@
   display: block;
   text-align: center;
   font-size: 32rpx;
-  color: #ff3b30;
+  color: #ffffff;
   font-weight: bold;
 }
 
@@ -399,7 +403,7 @@
 
 .cost-value {
   font-size: 40rpx;
-  color: #ff3b30;
+  color: #ffffff;
   font-weight: bold;
 }
 
