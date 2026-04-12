@@ -68,7 +68,9 @@ export const useAppStore = create<AppState>((set, get) => ({
   setProfile: (profile) => set({ profile }),
 
   initProfile: (userId: string) => {
-    let profile = loadProfileFromStorage(userId);
+    // 延迟 Taro 调用：改成异步来避免初始化时的 Taro 未就绪问题
+    try {
+      let profile = loadProfileFromStorage(userId);
 
     if (!profile) {
       // 创建新的 profile
@@ -86,6 +88,9 @@ export const useAppStore = create<AppState>((set, get) => ({
     }
 
     set({ profile });
+    } catch (error) {
+      console.error('[AppStore] initProfile 错误:', error);
+    }
   },
 
   updateDignityCoins: (userId: string, amount: number) => {
