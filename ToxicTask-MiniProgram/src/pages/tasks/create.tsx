@@ -118,30 +118,38 @@ export default function CreateTask() {
       <View className='form-section'>
         <Text className='section-title'>押注金额（尊严币）</Text>
         <View className='bet-options'>
-          {betOptions.map((amount) => (
-            <View
-              key={amount}
-              className={`bet-option ${betAmount === amount ? 'active' : ''}`}
-              onClick={() => setBetAmount(amount)}
-            >
-              <Text className='bet-text'>{amount}</Text>
-            </View>
-          ))}
+          {betOptions.map((amount) => {
+            const isDisabled = (profile?.dignity_coins || 0) < amount;
+            return (
+              <View
+                key={amount}
+                className={`bet-option ${betAmount === amount ? 'active' : ''} ${isDisabled ? 'disabled' : ''}`}
+                onClick={() => !isDisabled && setBetAmount(amount)}
+              >
+                <Text className='bet-text'>{amount}</Text>
+              </View>
+            );
+          })}
         </View>
 
         <View className='slider-section'>
           <View className='slider-header'>
-            <Text className='slider-label'>滑动调整押注</Text>
+            <Text className='slider-label'>滑动调整押注（最多 {profile?.dignity_coins || 0} 币）</Text>
             <Text className='slider-value'>{betAmount} 币</Text>
           </View>
           <Slider
             className='custom-slider'
             min={1}
-            max={100}
+            max={profile?.dignity_coins || 100}
             step={1}
             value={betAmount}
-            activeColor='#ff3b30'
+            activeColor='#ffffff'
             backgroundColor='#333'
+            blockColor='#ffffff'
+            blockSize={20}
+            onChange={(e) => setBetAmount(e.detail.value)}
+            onChanging={(e) => setBetAmount(e.detail.value)}
+          />
             blockColor='#ff3b30'
             blockSize={20}
             onChange={(e) => setBetAmount(e.detail.value)}

@@ -261,20 +261,24 @@ export default function SocialContractSetup() {
           <View className='bounty-section'>
             <Text className='section-title'>监督赏金</Text>
             <View className='bounty-options'>
-              {bountyOptions.map((amount) => (
-                <View
-                  key={amount}
-                  className={`bounty-option ${bountyCoins === amount ? 'active' : ''}`}
-                  onClick={() => setBountyCoins(amount)}
-                >
-                  <Text className='bounty-text'>{amount}</Text>
-                </View>
-              ))}
+              {bountyOptions.map((amount) => {
+                const totalCost = betAmount + amount;
+                const isDisabled = (profile?.dignity_coins || 0) < totalCost;
+                return (
+                  <View
+                    key={amount}
+                    className={`bounty-option ${bountyCoins === amount ? 'active' : ''} ${isDisabled ? 'disabled' : ''}`}
+                    onClick={() => !isDisabled && setBountyCoins(amount)}
+                  >
+                    <Text className='bounty-text'>{amount}</Text>
+                  </View>
+                );
+              })}
             </View>
             <Slider
               className='bounty-slider'
               min={5}
-              max={50}
+              max={Math.min(50, Math.max(5, (profile?.dignity_coins || 0) - betAmount))}
               step={5}
               value={bountyCoins}
               activeColor='#ff3b30'

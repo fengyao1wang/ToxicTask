@@ -56,6 +56,12 @@
   color: #000000;
 }
 
+.bet-option.disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
 .bet-text {
   color: #fff;
   font-size: 32rpx;

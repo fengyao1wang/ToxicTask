@@ -20,8 +20,36 @@ interface WechatLoginUser {
 
 export const authApi = {
   async signInWithWechat(code: string, nickname?: string, avatarUrl?: string) {
+    // 如果没有配置 Supabase，使用本地模拟登录
     if (!WECHAT_LOGIN_FUNCTION || !SUPABASE_ANON_KEY) {
-      throw new Error('缺少 Supabase 配置（TARO_APP_SUPABASE_URL 或 TARO_APP_SUPABASE_ANON_KEY）');
+      console.warn('[Auth] 未配置 Supabase，使用本地模拟登录');
+
+      // 生成本地用户ID（基于微信 code 或随机生成）
+      const localUserId = `local_${code.substring(0, 10)}_${Date.now()}`;
+
+      const localUser: WechatLoginUser = {
+        id: localUserId,
+        email: `${localUserId}@local.toxictask`,
+        user_metadata: {
+          nickname: nickname || '微信用户',
+          avatar_url: avatarUrl || '',
+          openid: code,
+        },
+      };
+
+      migrateLegacyLocalData(localUser.id);
+
+      // 保存本地 session
+      const sessionData = {
+        user: localUser,
+        user_id: localUser.id,
+        session_key: 'local_session',
+        supabase_url: '',
+        supabase_anon_key: '',
+      };
+
+      Taro.setStorageSync(STORAGE_KEYS.TOKEN, sessionData);
+      return localUser;
     }
 
     try {
