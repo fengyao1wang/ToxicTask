@@ -2,6 +2,12 @@ import { defineConfig, type UserConfigExport } from '@tarojs/cli'
 import TsconfigPathsPlugin from 'tsconfig-paths-webpack-plugin'
 import devConfig from './dev'
 import prodConfig from './prod'
+import dotenv from 'dotenv'
+import path from 'path'
+
+// 加载环境变量
+const envFile = process.env.NODE_ENV === 'production' ? '.env.production' : '.env.development'
+dotenv.config({ path: path.resolve(__dirname, '..', envFile) })
 
 // https://taro-docs.jd.com/docs/next/config#defineconfig-辅助函数
 export default defineConfig<'webpack5'>(async (merge, { command, mode }) => {
@@ -21,6 +27,9 @@ export default defineConfig<'webpack5'>(async (merge, { command, mode }) => {
       "@tarojs/plugin-generator"
     ],
     defineConstants: {
+      TARO_APP_SUPABASE_URL: JSON.stringify(process.env.TARO_APP_SUPABASE_URL || ''),
+      TARO_APP_SUPABASE_ANON_KEY: JSON.stringify(process.env.TARO_APP_SUPABASE_ANON_KEY || ''),
+      TARO_APP_USE_MOCK: JSON.stringify(process.env.TARO_APP_USE_MOCK || 'false'),
     },
     copy: {
       patterns: [

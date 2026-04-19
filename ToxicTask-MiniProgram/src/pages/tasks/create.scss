@@ -95,7 +95,8 @@
 }
 
 .custom-slider {
-  width: 100%;
+  width: calc(100% - 40rpx);
+  margin: 0 20rpx;
 }
 
 .time-display {

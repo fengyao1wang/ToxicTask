@@ -39,7 +39,7 @@ export default function Index() {
 
   // 定时检查过期任务
   useEffect(() => {
-    if (!user) return;
+    if (!user || !profile) return; // 确保 profile 已加载
 
     const checkExpiredTasks = async () => {
       // 使用调试日期或当前时间
@@ -63,8 +63,12 @@ export default function Index() {
               // 任务失败
               await updateTaskStatus(task.id, 'failed');
 
-              // 扣除尊严币
-              const newCoins = Math.max(0, (profile?.dignity_coins || 0) - task.bet_amount);
+              // 扣除尊严币 - 确保 profile 存在
+              if (!profile || profile.dignity_coins === undefined) {
+                console.error('[Index] Profile 未加载，跳过扣款');
+                continue;
+              }
+              const newCoins = Math.max(0, profile.dignity_coins - task.bet_amount);
               updateDignityCoins(user.id, newCoins);
 
               // 创建耻辱记录
@@ -92,8 +96,12 @@ export default function Index() {
             // 单次任务过期
             await updateTaskStatus(task.id, 'failed');
 
-            // 扣除尊严币
-            const newCoins = Math.max(0, (profile?.dignity_coins || 0) - task.bet_amount);
+            // 扣除尊严币 - 确保 profile 存在
+            if (!profile || profile.dignity_coins === undefined) {
+              console.error('[Index] Profile 未加载，跳过扣款');
+              continue;
+            }
+            const newCoins = Math.max(0, profile.dignity_coins - task.bet_amount);
             updateDignityCoins(user.id, newCoins);
 
             // 创建耻辱记录
@@ -187,8 +195,12 @@ export default function Index() {
         // 更新任务状态为已完成
         await updateTaskStatus(taskId, 'completed');
 
-        // 返还押金
-        const newCoins = (profile.dignity_coins || 0) + betAmount;
+        // 返还押金 - 确保 profile 存在
+        if (!profile || profile.dignity_coins === undefined) {
+          console.error('[Index] Profile 未加载，无法返还押金');
+          return;
+        }
+        const newCoins = profile.dignity_coins + betAmount;
         updateDignityCoins(user.id, newCoins);
 
         // 创建交易记录

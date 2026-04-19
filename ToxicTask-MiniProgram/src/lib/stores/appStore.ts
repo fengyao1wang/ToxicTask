@@ -71,6 +71,11 @@ export const useAppStore = create<AppState>((set, get) => ({
     // 延迟 Taro 调用：改成异步来避免初始化时的 Taro 未就绪问题
     try {
       let profile = loadProfileFromStorage(userId);
+      console.log('[AppStore][Debug] initProfile 调用:', {
+        userId,
+        profileExists: !!profile,
+        currentBalance: profile?.dignity_coins,
+      });
 
     if (!profile) {
       // 创建新的 profile
@@ -84,6 +89,7 @@ export const useAppStore = create<AppState>((set, get) => ({
         updated_at: new Date().toISOString(),
       };
 
+      console.log('[AppStore][Info] 创建新 profile，初始余额 100');
       saveProfileToStorage(userId, profile);
     }
 

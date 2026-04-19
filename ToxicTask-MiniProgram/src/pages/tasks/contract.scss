@@ -155,7 +155,8 @@
 }
 
 .bounty-slider {
-  margin: 24rpx 0;
+  width: calc(100% - 40rpx);
+  margin: 24rpx 20rpx;
 }
 
 .bounty-value {

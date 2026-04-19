@@ -281,9 +281,9 @@ export default function SocialContractSetup() {
               max={Math.min(50, Math.max(5, (profile?.dignity_coins || 0) - betAmount))}
               step={5}
               value={bountyCoins}
-              activeColor='#ff3b30'
+              activeColor='#ffffff'
               backgroundColor='#333'
-              blockColor='#ff3b30'
+              blockColor='#ffffff'
               blockSize={20}
               onChange={(e) => setBountyCoins(e.detail.value)}
             />

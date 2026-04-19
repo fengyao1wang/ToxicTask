@@ -48,10 +48,19 @@ const saveTransactionsToStorage = (userId: string, transactions: CoinTransaction
 const updateUserBalance = (userId: string, newBalance: number) => {
   try {
     const allProfiles = Taro.getStorageSync(STORAGE_KEYS.PROFILES) || {};
+    console.log('[CoinStore][Debug] 更新余额前:', {
+      userId,
+      oldBalance: allProfiles[userId]?.dignity_coins,
+      newBalance,
+      profileExists: !!allProfiles[userId],
+    });
     if (allProfiles[userId]) {
       allProfiles[userId].dignity_coins = newBalance;
       allProfiles[userId].updated_at = new Date().toISOString();
       Taro.setStorageSync(STORAGE_KEYS.PROFILES, allProfiles);
+      console.log('[CoinStore][Debug] 余额已更新:', newBalance);
+    } else {
+      console.error('[CoinStore][Error] 用户 profile 不存在，无法更新余额');
     }
   } catch (error) {
     console.error('[CoinStore][Error] 更新用户余额失败:', error);

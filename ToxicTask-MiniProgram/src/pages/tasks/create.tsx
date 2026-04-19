@@ -150,11 +150,6 @@ export default function CreateTask() {
             onChange={(e) => setBetAmount(e.detail.value)}
             onChanging={(e) => setBetAmount(e.detail.value)}
           />
-            blockColor='#ff3b30'
-            blockSize={20}
-            onChange={(e) => setBetAmount(e.detail.value)}
-            onChanging={(e) => setBetAmount(e.detail.value)}
-          />
         </View>
       </View>
 

@@ -2,9 +2,12 @@ import Taro from '@tarojs/taro';
 import { STORAGE_KEYS } from '@/types';
 import { migrateLegacyLocalData } from './migration';
 
-// 安全访问 process.env（小程序环境中 process 可能未定义）
-const SUPABASE_URL = (typeof process !== 'undefined' && process.env?.TARO_APP_SUPABASE_URL) ? process.env.TARO_APP_SUPABASE_URL : '';
-const SUPABASE_ANON_KEY = (typeof process !== 'undefined' && process.env?.TARO_APP_SUPABASE_ANON_KEY) ? process.env.TARO_APP_SUPABASE_ANON_KEY : '';
+// 使用编译时注入的常量（通过 defineConstants）
+declare const TARO_APP_SUPABASE_URL: string;
+declare const TARO_APP_SUPABASE_ANON_KEY: string;
+
+const SUPABASE_URL = TARO_APP_SUPABASE_URL;
+const SUPABASE_ANON_KEY = TARO_APP_SUPABASE_ANON_KEY;
 const WECHAT_LOGIN_FUNCTION = SUPABASE_URL ? `${SUPABASE_URL}/functions/v1/wechat-login` : '';
 
 interface WechatLoginUser {
@@ -24,8 +27,16 @@ export const authApi = {
     if (!WECHAT_LOGIN_FUNCTION || !SUPABASE_ANON_KEY) {
       console.warn('[Auth] 未配置 Supabase，使用本地模拟登录');
 
-      // 生成本地用户ID（基于微信 code 或随机生成）
-      const localUserId = `local_${code.substring(0, 10)}_${Date.now()}`;
+      // 检查是否已有本地用户
+      const existingSession = Taro.getStorageSync(STORAGE_KEYS.TOKEN);
+      if (existingSession && existingSession.user_id && existingSession.user_id.startsWith('local_')) {
+        console.log('[Auth][Debug] 使用已存在的本地用户:', existingSession.user_id);
+        return existingSession.user;
+      }
+
+      // 生成固定的本地用户ID（基于设备或使用固定值）
+      const localUserId = 'local_user_default';
+      console.log('[Auth][Debug] 创建新的本地用户:', localUserId);
 
       const localUser: WechatLoginUser = {
         id: localUserId,
