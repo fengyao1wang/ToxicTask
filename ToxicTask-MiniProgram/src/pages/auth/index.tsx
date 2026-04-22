@@ -1,6 +1,6 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { View, Text, Button } from '@tarojs/components';
-import Taro from '@tarojs/taro';
+import Taro, { useRouter } from '@tarojs/taro';
 import { authApi } from '@/lib/auth';
 import { useAppStore } from '@/lib/stores/appStore';
 import './index.scss';
@@ -8,8 +8,17 @@ import './index.scss';
 export default function Auth() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const router = useRouter();
 
   const { setUser, initProfile } = useAppStore();
+
+  // 保存来源页面信息
+  useEffect(() => {
+    const { redirect } = router.params;
+    if (redirect) {
+      Taro.setStorageSync('auth_redirect', decodeURIComponent(redirect));
+    }
+  }, [router.params]);
 
   // 微信授权登录
   const handleWechatLogin = async () => {
@@ -39,7 +48,11 @@ export default function Auth() {
 
       const user = await authApi.signInWithWechat(code, nickName, avatarUrl);
       setUser(user);
-      initProfile(user.id);
+
+      // 🔥 异步初始化：不阻塞登录流程
+      setTimeout(() => {
+        initProfile(user.id);
+      }, 0);
 
       Taro.showToast({
         title: '登录成功',
@@ -47,11 +60,26 @@ export default function Auth() {
       });
 
       setTimeout(() => {
-        Taro.switchTab({ url: '/pages/index/index' });
+        // 检查是否有重定向路径
+        const redirectUrl = Taro.getStorageSync('auth_redirect');
+        if (redirectUrl) {
+          Taro.removeStorageSync('auth_redirect');
+          Taro.redirectTo({ url: redirectUrl });
+        } else {
+          Taro.switchTab({ url: '/pages/index/index' });
+        }
       }, 1000);
     } catch (err: any) {
       console.error('[Auth] 微信登录失败:', err);
-      setError(err?.message || '登录失败，请重试');
+      const errorMsg = err?.message || '登录失败，请重试';
+      setError(errorMsg);
+
+      // 显示详细错误信息
+      Taro.showModal({
+        title: '登录失败',
+        content: errorMsg,
+        showCancel: false,
+      });
     } finally {
       setLoading(false);
     }

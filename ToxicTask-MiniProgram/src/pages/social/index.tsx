@@ -1,8 +1,9 @@
 import { useState, useEffect } from 'react';
 import { View, Text, Button, Image, Textarea } from '@tarojs/components';
-import Taro from '@tarojs/taro';
+import Taro, { useDidShow } from '@tarojs/taro';
 import { useAppStore } from '@/lib/stores/appStore';
 import { useTaskStore } from '@/lib/stores/taskStore';
+import { tasksApi } from '@/lib/api/tasks';
 import { Task } from '@/types';
 import './index.scss';
 
@@ -18,13 +19,71 @@ export default function SocialDashboard() {
   const [showCommentModal, setShowCommentModal] = useState(false);
   const [reviewAction, setReviewAction] = useState<'approve' | 'reject'>('approve');
   const [loading, setLoading] = useState(false);
+  const [supervisorTasks, setSupervisorTasks] = useState<Task[]>([]);
+  const [loadingSupervisorTasks, setLoadingSupervisorTasks] = useState(true);
+
+  // 加载监督任务的函数
+  const loadSupervisorTasks = async () => {
+    if (!user) {
+      console.log('[Social] user 为空，跳过加载');
+      setLoadingSupervisorTasks(false);
+      return;
+    }
+
+    try {
+      console.log('[Social] 开始加载监督任务, userId:', user.id);
+      setLoadingSupervisorTasks(true);
+      const tasks = await tasksApi.getTasksAsSupervisor(user.id);
+      console.log('[Social] 加载监督任务成功:', tasks.length);
+
+      // 🔥 调试日志：打印每个任务的关键信息
+      tasks.forEach((task, index) => {
+        console.log(`[Social][Debug] 任务 ${index + 1}:`, {
+          id: task.id,
+          title: task.title,
+          user_id: task.user_id,
+          supervisor_id: task.supervisor_id,
+          supervision_status: task.supervision_status,
+          current_user_id: user.id,
+          is_supervisor: task.supervisor_id === user.id,
+        });
+      });
+
+      setSupervisorTasks(tasks);
+    } catch (error) {
+      console.error('[Social] 加载监督任务失败:', error);
+    } finally {
+      setLoadingSupervisorTasks(false);
+    }
+  };
+
+  // 初始加载
+  useEffect(() => {
+    console.log('[Social] useEffect 触发, user:', user ? user.id : 'null');
+    loadSupervisorTasks();
+  }, [user]);
+
+  // 页面显示时刷新数据（关键！）
+  useDidShow(() => {
+    // 🔥 添加 loading 保护，避免重复触发
+    if (!loadingSupervisorTasks) {
+      console.log('[Social] 页面显示，刷新监督任务列表');
+      loadSupervisorTasks();
+    }
+  });
 
   // 待我裁决：我是监督者且状态为待审核的任务
-  const tasksToReview = tasks.filter(
+  const tasksToReview = supervisorTasks.filter(
     (task) =>
       task.is_supervised &&
-      task.supervisor_id === user?.id &&
       task.supervision_status === 'evidence_submitted'
+  );
+
+  // 监督中的任务：状态为 invited（等待提交证据）
+  const tasksSupervising = supervisorTasks.filter(
+    (task) =>
+      task.is_supervised &&
+      task.supervision_status === 'invited'
   );
 
   // 我的契约：我发起的监督任务
@@ -50,9 +109,9 @@ export default function SocialDashboard() {
       setLoading(true);
 
       // 先更新任务的 supervisor_comment
-      const taskIndex = tasks.findIndex((t) => t.id === currentReviewTask.id);
+      const taskIndex = supervisorTasks.findIndex((t) => t.id === currentReviewTask.id);
       if (taskIndex !== -1) {
-        tasks[taskIndex].supervisor_comment = reviewComment.trim() || null;
+        supervisorTasks[taskIndex].supervisor_comment = reviewComment.trim() || null;
       }
 
       // 执行审核
@@ -62,6 +121,10 @@ export default function SocialDashboard() {
         title: approved ? '已通过' : '已拒绝',
         icon: 'success',
       });
+
+      // 重新加载监督任务列表
+      const updatedTasks = await tasksApi.getTasksAsSupervisor(user.id);
+      setSupervisorTasks(updatedTasks);
 
       setShowCommentModal(false);
       setCurrentReviewTask(null);
@@ -124,14 +187,49 @@ export default function SocialDashboard() {
       {/* 待我裁决 */}
       {activeTab === 'review' && (
         <View className='content-section'>
-          {tasksToReview.length === 0 ? (
+          {loadingSupervisorTasks ? (
             <View className='empty-state'>
-              <Text className='empty-text'>暂无待审核任务</Text>
-              <Text className='empty-hint'>当好友提交证据后，会在这里显示</Text>
+              <Text className='empty-text'>加载中...</Text>
             </View>
           ) : (
-            <View className='task-list'>
-              {tasksToReview.map((task) => (
+            <>
+              {/* 监督中的任务（等待提交证据） */}
+              {tasksSupervising.length > 0 && (
+                <View className='section-block'>
+                  <Text className='section-title'>监督中（等待提交证据）</Text>
+                  <View className='task-list'>
+                    {tasksSupervising.map((task) => (
+                      <View key={task.id} className='supervising-card'>
+                        <View className='card-header'>
+                          <Text className='task-title'>{task.title}</Text>
+                          <Text className='task-bet'>{task.bet_amount} 币</Text>
+                        </View>
+                        <View className='card-info'>
+                          <Text className='info-text'>等待好友提交完成证据...</Text>
+                        </View>
+                        <View className='reward-hint'>
+                          <Text className='hint-text'>
+                            通过后获得 {task.bounty_coins} 币 | 拒绝后获得{' '}
+                            {task.bounty_coins + Math.floor(task.bet_amount * 0.5)} 币
+                          </Text>
+                        </View>
+                      </View>
+                    ))}
+                  </View>
+                </View>
+              )}
+
+              {/* 待裁决的任务（已提交证据） */}
+              {tasksToReview.length === 0 && tasksSupervising.length === 0 ? (
+                <View className='empty-state'>
+                  <Text className='empty-text'>暂无监督任务</Text>
+                  <Text className='empty-hint'>接受好友的监督邀请后，会在这里显示</Text>
+                </View>
+              ) : tasksToReview.length > 0 ? (
+                <View className='section-block'>
+                  <Text className='section-title'>待裁决（已提交证据）</Text>
+                  <View className='task-list'>
+                    {tasksToReview.map((task) => (
                 <View key={task.id} className='review-card'>
                   <View className='card-header'>
                     <Text className='task-title'>{task.title}</Text>
@@ -143,13 +241,26 @@ export default function SocialDashboard() {
                     <View className='evidence-section'>
                       <Text className='evidence-label'>证据图片：</Text>
                       <Image
-                        src={task.evidence_image}
+                        src={
+                          task.evidence_image.startsWith('data:image')
+                            ? task.evidence_image
+                            : `data:image/jpeg;base64,${task.evidence_image}`
+                        }
                         className='evidence-image'
                         mode='aspectFit'
+                        onLoad={() => {
+                          console.log('[Social] 图片加载成功:', task.evidence_image?.substring(0, 50));
+                        }}
+                        onError={(e) => {
+                          console.error('[Social] 图片加载失败:', task.evidence_image?.substring(0, 50), e);
+                        }}
                         onClick={() => {
+                          const imgSrc = task.evidence_image!.startsWith('data:image')
+                            ? task.evidence_image!
+                            : `data:image/jpeg;base64,${task.evidence_image}`;
                           Taro.previewImage({
-                            urls: [task.evidence_image!],
-                            current: task.evidence_image!,
+                            urls: [imgSrc],
+                            current: imgSrc,
                           });
                         }}
                       />
@@ -189,9 +300,12 @@ export default function SocialDashboard() {
                 </View>
               ))}
             </View>
-          )}
-        </View>
-      )}
+          </View>
+        ) : null}
+      </>
+    )}
+  </View>
+)}
 
       {/* 我的契约 */}
       {activeTab === 'mycontracts' && (

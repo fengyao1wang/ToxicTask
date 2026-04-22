@@ -14,7 +14,12 @@
       "Bash(printf \"✓ Build successful, app.json exists\\\\n\")",
       "Bash(printf \"✗ Build failed\\\\n\")",
       "Bash(printf \"✓ Build OK\\\\n\")",
-      "Bash(npm list:*)"
+      "Bash(npm list:*)",
+      "Bash(supabase functions:*)",
+      "Bash(supabase db:*)",
+      "Bash(xargs grep:*)",
+      "Bash(rm:*)",
+      "Bash(psql -h localhost -U postgres -d postgres -c \"SELECT id, title, evidence_image IS NOT NULL as has_image, LENGTH\\(evidence_image\\) as image_length, supervision_status FROM tasks WHERE is_supervised = true ORDER BY created_at DESC LIMIT 5;\")"
     ]
   }
 }

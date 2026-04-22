@@ -359,3 +359,32 @@
   border: none;
   line-height: 80rpx;
 }
+
+/* 分组标题 */
+.section-block {
+  margin-bottom: 40rpx;
+}
+
+.section-title {
+  font-size: 28rpx;
+  color: #999;
+  padding: 20rpx 30rpx;
+  display: block;
+}
+
+/* 监督中的任务卡片 */
+.supervising-card {
+  background-color: #1a1a1a;
+  border: 2rpx solid #333;
+  border-radius: 16rpx;
+  padding: 32rpx;
+  margin: 0 30rpx 24rpx;
+}
+
+.info-text {
+  font-size: 28rpx;
+  color: #666;
+  line-height: 1.6;
+  display: block;
+  margin: 20rpx 0;
+}

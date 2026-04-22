@@ -10,8 +10,9 @@ interface CoinState {
     type: TransactionType,
     amount: number,
     sourceId?: string,
-    description?: string
-  ) => Promise<void>;
+    description?: string,
+    skipDbSync?: boolean
+  ) => Promise<number>; // 返回新余额
   getBalance: (userId: string) => number;
   getTransactionsByType: (userId: string, type: TransactionType) => CoinTransaction[];
 }
@@ -94,7 +95,8 @@ export const useCoinStore = create<CoinState>((set, get) => ({
     type: TransactionType,
     amount: number,
     sourceId?: string,
-    description?: string
+    description?: string,
+    skipDbSync = false // 🔥 新增：跳过数据库同步（用于批量操作）
   ) => {
     try {
       // 获取当前余额
@@ -126,6 +128,21 @@ export const useCoinStore = create<CoinState>((set, get) => ({
       // 更新用户余额
       updateUserBalance(userId, newBalance);
 
+      // 同步余额到数据库（可选跳过）
+      if (!skipDbSync) {
+        try {
+          const { profilesApi } = await import('@/lib/api/profiles');
+          await profilesApi.updateProfile(userId, {
+            dignity_coins: newBalance,
+            updated_at: new Date().toISOString(),
+          });
+          console.log('[CoinStore][Info] 余额已同步到数据库:', newBalance);
+        } catch (error) {
+          console.warn('[CoinStore][Warning] 同步余额到数据库失败:', error);
+          // 不影响本地流程
+        }
+      }
+
       // 更新状态
       set({ transactions });
 
@@ -134,6 +151,8 @@ export const useCoinStore = create<CoinState>((set, get) => ({
         amount,
         balance_after: newBalance,
       });
+
+      return newBalance; // 🔥 返回新余额，方便批量操作后统一同步
     } catch (error) {
       console.error('[CoinStore][Error] 创建交易记录失败:', error);
       throw error;

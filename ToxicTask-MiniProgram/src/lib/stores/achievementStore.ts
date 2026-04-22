@@ -556,11 +556,30 @@ const checkMidnightWarrior = (tasks: any[]): boolean => {
 // DDL战神：截止时间前5分钟内完成任务
 const checkDeadlineJedi = (completedTasks: any[]): boolean => {
   return completedTasks.some((task) => {
+    // 🔥 关键修复：必须是 completed 状态，避免其他操作（如接受监督）误触发
+    if (task.status !== 'completed') {
+      return false;
+    }
+
     const completedAt = new Date(task.updated_at).getTime();
     const deadline = new Date(task.deadline).getTime();
     const fiveMinutes = 5 * 60 * 1000;
     const timeDiff = deadline - completedAt;
-    return timeDiff >= 0 && timeDiff <= fiveMinutes;
+
+    // 必须在截止时间前5分钟内完成，且已经是完成状态
+    const isDeadlineJedi = timeDiff >= 0 && timeDiff <= fiveMinutes;
+
+    if (isDeadlineJedi) {
+      console.log('[Achievement][Debug] DDL战神触发:', {
+        taskId: task.id,
+        completedAt: new Date(completedAt).toISOString(),
+        deadline: new Date(deadline).toISOString(),
+        timeDiff: `${Math.floor(timeDiff / 1000)}秒`,
+        status: task.status,
+      });
+    }
+
+    return isDeadlineJedi;
   });
 };
 

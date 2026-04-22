@@ -20,7 +20,7 @@ export default function SocialContractSetup() {
 
   // 监督相关状态
   const [isSupervised, setIsSupervised] = useState(false);
-  const [bountyCoins, setBountyCoins] = useState(10);
+  const [bountyCoins, setBountyCoins] = useState(1);
   const [visibility, setVisibility] = useState<'friends' | 'public'>('friends');
   const [loading, setLoading] = useState(false);
   const [createdTaskId, setCreatedTaskId] = useState<string>('');
@@ -62,7 +62,7 @@ export default function SocialContractSetup() {
     };
   });
 
-  const bountyOptions = [5, 10, 20, 30, 50];
+  const bountyOptions = [1, 5, 10, 20, 30, 50];
 
   // 创建任务（单机模式）
   const handleCreateDirect = async () => {
@@ -277,15 +277,16 @@ export default function SocialContractSetup() {
             </View>
             <Slider
               className='bounty-slider'
-              min={5}
-              max={Math.min(50, Math.max(5, (profile?.dignity_coins || 0) - betAmount))}
-              step={5}
+              min={1}
+              max={50}
+              step={1}
               value={bountyCoins}
               activeColor='#ffffff'
               backgroundColor='#333'
               blockColor='#ffffff'
               blockSize={20}
               onChange={(e) => setBountyCoins(e.detail.value)}
+              onChanging={(e) => setBountyCoins(e.detail.value)}
             />
             <Text className='bounty-value'>{bountyCoins} 币</Text>
           </View>

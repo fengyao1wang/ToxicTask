@@ -1,18 +1,40 @@
 import { useEffect, useState } from 'react';
 import { View, Text, Button } from '@tarojs/components';
-import Taro from '@tarojs/taro';
+import Taro, { useDidShow } from '@tarojs/taro';
 import { useAppStore } from '@/lib/stores/appStore';
 import { useTaskStore } from '@/lib/stores/taskStore';
 import { useAchievementStore } from '@/lib/stores/achievementStore';
+import { tasksApi } from '@/lib/api/tasks';
 import { authApi } from '@/lib/auth';
+import { ShameLog } from '@/types';
 import './index.scss';
+
+// 随机耻辱文案（使用任务ID作为种子，确保不同任务有不同文案）
+const getRandomShameComment = (taskId: string): string => {
+  const comments = [
+    '只要我放弃得够快，失败就追不上我。',
+    '气氛都烘托到这了，不失败一次确实很难收场。',
+    '尊严币 -10，脸皮厚度 +100。这波啊，这波是不亏。',
+    '事实证明，有些人的承诺就像易碎品，一碰就稀碎。',
+    '咕咕咕？本世纪最大鸽王已诞生，路过的朋友请尽情嘲笑！',
+  ];
+
+  // 🔥 使用任务ID的哈希值作为种子，确保同一任务总是得到相同文案，不同任务得到不同文案
+  let hash = 0;
+  for (let i = 0; i < taskId.length; i++) {
+    hash = ((hash << 5) - hash) + taskId.charCodeAt(i);
+    hash = hash & hash; // Convert to 32bit integer
+  }
+  const index = Math.abs(hash) % comments.length;
+  return comments[index];
+};
 
 export default function Index() {
   const { user, profile, setUser, initProfile, updateDignityCoins } = useAppStore();
   const { tasks, loading, fetchTasks, updateTaskStatus, checkInTask, checkSupervisionTimeout } = useTaskStore();
   const { checkAndUnlockAchievements } = useAchievementStore();
   const [checking, setChecking] = useState(true);
-  const [debugDate, setDebugDate] = useState<string | null>(null); // 调试用的模拟日期
+  const [pendingReviewCount, setPendingReviewCount] = useState(0); // 待裁决任务数量
 
   useEffect(() => {
     checkAuth();
@@ -23,35 +45,74 @@ export default function Index() {
     }
   }, []);
 
-  // 定时刷新 profile（确保余额最新）
-  useEffect(() => {
+  // 加载待裁决任务数量
+  const loadPendingReviewCount = async () => {
     if (!user) return;
 
-    const refreshProfile = () => {
-      initProfile(user.id);
-    };
+    try {
+      const supervisorTasks = await tasksApi.getTasksAsSupervisor(user.id);
+      const pendingCount = supervisorTasks.filter(
+        (task) => task.supervision_status === 'evidence_submitted'
+      ).length;
+      setPendingReviewCount(pendingCount);
+      console.log('[Index] 待裁决任务数量:', pendingCount);
+    } catch (error) {
+      console.error('[Index] 加载待裁决任务失败:', error);
+    }
+  };
 
-    // 每5秒刷新一次 profile
-    const profileTimer = setInterval(refreshProfile, 5000);
+  // 页面显示时刷新待裁决数量
+  useDidShow(() => {
+    // 🔥 性能优化：只在从其他页面返回时刷新，避免首次加载重复请求
+    if (user && !loading && !checking) {
+      console.log('[Index] 页面显示，刷新数据');
+      // 🔥 并行执行两个请求，减少等待时间
+      Promise.all([
+        loadPendingReviewCount(),
+        fetchTasks(user.id)
+      ]).catch(err => {
+        console.error('[Index] 刷新数据失败:', err);
+      });
+    }
+  });
 
-    return () => clearInterval(profileTimer);
-  }, [user, initProfile]);
+  // 🔥 删除重复的初始加载：checkAuth 中已经调用了 fetchTasks
+  // useEffect(() => {
+  //   if (user) {
+  //     loadPendingReviewCount();
+  //   }
+  // }, [user]);
+
+  // 🔥 删除定时器：不再每 5 秒刷新 profile
+  // 改为依赖用户操作（下拉刷新、切换页面）触发更新
 
   // 定时检查过期任务
   useEffect(() => {
     if (!user || !profile) return; // 确保 profile 已加载
 
     const checkExpiredTasks = async () => {
-      // 使用调试日期或当前时间
-      const currentTime = debugDate
-        ? new Date(debugDate + 'T23:59:59').getTime()
-        : new Date().getTime();
-      const today = debugDate || new Date().toISOString().split('T')[0];
+      // 🔥 关键修复：从 store 实时获取最新任务，而不是依赖 useEffect 的 tasks 依赖
+      const currentTasks = useTaskStore.getState().tasks;
+
+      console.log('[Index][Debug] 检查过期任务, 总任务数:', currentTasks.length);
+
+      // 使用当前时间
+      const currentTime = new Date().getTime();
+      const today = new Date().toISOString().split('T')[0];
       let hasChanges = false;
 
-      for (const task of tasks) {
+      for (const task of currentTasks) {
         if (task.status === 'pending') {
           const deadline = new Date(task.deadline).getTime();
+
+          console.log('[Index][Debug] 检查任务:', {
+            id: task.id,
+            title: task.title,
+            deadline: task.deadline,
+            currentTime: new Date(currentTime).toISOString(),
+            isExpired: currentTime > deadline,
+            task_type: task.task_type,
+          });
 
           if (task.task_type === 'repeat' && task.check_ins) {
             // 重复任务：检查是否有未打卡的过期日期
@@ -60,26 +121,21 @@ export default function Index() {
             });
 
             if (hasMissedCheckIn || currentTime > deadline) {
-              // 任务失败
+              console.log('[Index][Info] 重复任务过期，创建耻辱记录:', task.id);
+              // 任务失败（押金已在创建时扣除，这里只标记失败状态）
               await updateTaskStatus(task.id, 'failed');
 
-              // 扣除尊严币 - 确保 profile 存在
-              if (!profile || profile.dignity_coins === undefined) {
-                console.error('[Index] Profile 未加载，跳过扣款');
-                continue;
-              }
-              const newCoins = Math.max(0, profile.dignity_coins - task.bet_amount);
-              updateDignityCoins(user.id, newCoins);
-
               // 创建耻辱记录
-              const shameLog = {
+              const shameLog: ShameLog = {
                 id: `shame_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`,
                 task_id: task.id,
                 user_id: user.id,
                 task_title: task.title,
                 bet_amount: task.bet_amount,
-                ai_comment: '重复任务未能坚持打卡，意志力太薄弱了！',
+                ai_comment: getRandomShameComment(task.id), // 🔥 传入任务ID作为种子
                 created_at: new Date().toISOString(),
+                visibility: task.visibility || 'friends',
+                supervisor_comment: null,
               };
 
               console.log('[Index] 创建耻辱记录:', shameLog);
@@ -93,26 +149,21 @@ export default function Index() {
               hasChanges = true;
             }
           } else if (task.task_type === 'single' && currentTime > deadline) {
-            // 单次任务过期
+            console.log('[Index][Info] 单次任务过期，创建耻辱记录:', task.id);
+            // 单次任务过期（押金已在创建时扣除，这里只标记失败状态）
             await updateTaskStatus(task.id, 'failed');
 
-            // 扣除尊严币 - 确保 profile 存在
-            if (!profile || profile.dignity_coins === undefined) {
-              console.error('[Index] Profile 未加载，跳过扣款');
-              continue;
-            }
-            const newCoins = Math.max(0, profile.dignity_coins - task.bet_amount);
-            updateDignityCoins(user.id, newCoins);
-
             // 创建耻辱记录
-            const shameLog = {
+            const shameLog: ShameLog = {
               id: `shame_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`,
               task_id: task.id,
               user_id: user.id,
               task_title: task.title,
               bet_amount: task.bet_amount,
-              ai_comment: '任务超时未完成，真是令人失望！',
+              ai_comment: getRandomShameComment(task.id), // 🔥 传入任务ID作为种子
               created_at: new Date().toISOString(),
+              visibility: task.visibility || 'friends',
+              supervisor_comment: null,
             };
 
             console.log('[Index] 创建耻辱记录:', shameLog);
@@ -133,10 +184,8 @@ export default function Index() {
         await checkAndUnlockAchievements(user.id);
       }
 
-      if (hasChanges) {
-        // 刷新任务列表
-        await fetchTasks(user.id);
-      }
+      // 🔥 关键修复：不再调用 fetchTasks，避免无限循环
+      // updateTaskStatus 已经更新了本地状态，不需要重新加载
     };
 
     // 检查监督超时
@@ -156,7 +205,7 @@ export default function Index() {
     }, 10000);
 
     return () => clearInterval(timer);
-  }, [user, tasks, profile, debugDate]);
+  }, [user, profile]); // 🔥 移除 tasks 依赖，避免无限循环
 
   const checkAuth = async () => {
     try {
@@ -170,10 +219,23 @@ export default function Index() {
       const currentUser = await authApi.getCurrentUser();
       if (currentUser) {
         setUser(currentUser);
-        // 初始化 profile（本地存储）
-        initProfile(currentUser.id);
-        // 获取任务列表（本地存储）
-        await fetchTasks(currentUser.id);
+        // 🔥 性能优化：并行执行初始化操作
+        await Promise.all([
+          // 初始化 profile（本地存储，快速）
+          Promise.resolve(initProfile(currentUser.id)),
+          // 🔥 首次加载跳过数据库同步，直接读取本地缓存（极速）
+          fetchTasks(currentUser.id, true),
+          // 加载待裁决任务数量（数据库请求）
+          loadPendingReviewCount()
+        ]);
+        console.log('[Index] 初始化完成');
+
+        // 🔥 后台异步同步监督任务状态（不阻塞界面显示）
+        setTimeout(() => {
+          fetchTasks(currentUser.id, false).catch(err => {
+            console.warn('[Index] 后台同步任务失败:', err);
+          });
+        }, 500);
       }
     } catch (error) {
       console.error('[Index] Auth check error:', error);
@@ -263,7 +325,7 @@ export default function Index() {
   const handleCheckIn = async (taskId: string) => {
     if (!user) return;
 
-    const today = debugDate || new Date().toISOString().split('T')[0];
+    const today = new Date().toISOString().split('T')[0];
 
     try {
       await checkInTask(taskId, today);
@@ -305,28 +367,6 @@ export default function Index() {
     }
   };
 
-  // 调试功能：推进一天
-  const handleDebugNextDay = () => {
-    const currentDate = debugDate ? new Date(debugDate) : new Date();
-    currentDate.setDate(currentDate.getDate() + 1);
-    const newDate = currentDate.toISOString().split('T')[0];
-    setDebugDate(newDate);
-
-    Taro.showToast({
-      title: `时间推进到 ${newDate}`,
-      icon: 'none',
-    });
-  };
-
-  // 调试功能：重置日期
-  const handleDebugResetDate = () => {
-    setDebugDate(null);
-    Taro.showToast({
-      title: '已重置为真实日期',
-      icon: 'success',
-    });
-  };
-
   if (checking) {
     return (
       <View className='index-container'>
@@ -342,19 +382,28 @@ export default function Index() {
         <Text className='header-subtitle'>尊严币: {profile?.dignity_coins || 0}</Text>
       </View>
 
-      {/* 调试工具 */}
-      <View className='debug-panel'>
-        <Text className='debug-title'>
-          🛠️ 测试工具 - 当前日期: {debugDate || new Date().toISOString().split('T')[0]}
-        </Text>
-        <View className='debug-buttons'>
-          <Button className='debug-button' size='mini' onClick={handleDebugNextDay}>
-            推进一天 ⏭️
-          </Button>
-          <Button className='debug-button reset' size='mini' onClick={handleDebugResetDate}>
-            重置日期 🔄
-          </Button>
+      {/* 待我裁决入口 - 常驻显示 */}
+      <View
+        className={`review-entry ${pendingReviewCount > 0 ? 'has-pending' : 'no-pending'}`}
+        onClick={() => {
+          console.log('[Index] 点击待我裁决入口，跳转到社交互动页');
+          Taro.navigateTo({ url: '/pages/social/index' });
+        }}
+      >
+        <View className='review-entry-content'>
+          <Text className='review-entry-icon'>⚖️</Text>
+          <View className='review-entry-text'>
+            <Text className='review-entry-title'>待我裁决</Text>
+            <Text className='review-entry-desc'>
+              {pendingReviewCount > 0 ? '有好友提交了完成证据' : '暂无需要裁决的任务'}
+            </Text>
+          </View>
         </View>
+        {pendingReviewCount > 0 && (
+          <View className='review-badge'>
+            <Text className='review-badge-text'>{pendingReviewCount}</Text>
+          </View>
+        )}
       </View>
 
       <View className='task-list'>
@@ -368,7 +417,7 @@ export default function Index() {
         )}
 
         {!loading && tasks.map((task) => {
-          const today = debugDate || new Date().toISOString().split('T')[0];
+          const today = new Date().toISOString().split('T')[0];
           const todayCheckIn = task.check_ins?.find((c) => c.date === today);
           const canCheckInToday = task.task_type === 'repeat' && todayCheckIn && !todayCheckIn.checked;
 

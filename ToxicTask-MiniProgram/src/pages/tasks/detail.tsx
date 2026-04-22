@@ -1,8 +1,9 @@
 import { useEffect, useState } from 'react';
 import { View, Text, Button, Image, Textarea } from '@tarojs/components';
-import Taro, { useRouter } from '@tarojs/taro';
+import Taro, { useRouter, useShareAppMessage, useDidShow } from '@tarojs/taro';
 import { useAppStore } from '@/lib/stores/appStore';
 import { useTaskStore } from '@/lib/stores/taskStore';
+import { tasksApi } from '@/lib/api/tasks';
 import { Task } from '@/types';
 import './detail.scss';
 
@@ -10,27 +11,123 @@ export default function TaskDetail() {
   const router = useRouter();
   const { taskId } = router.params;
   const { user } = useAppStore();
-  const { tasks, acceptSupervision, submitEvidence, reviewEvidence } = useTaskStore();
+  const { tasks, acceptSupervision, cancelSupervision, submitEvidence, reviewEvidence } = useTaskStore();
 
   const [task, setTask] = useState<Task | null>(null);
   const [evidenceText, setEvidenceText] = useState('');
   const [evidenceImage, setEvidenceImage] = useState('');
   const [loading, setLoading] = useState(false);
+  const [loadingTask, setLoadingTask] = useState(true);
 
-  useEffect(() => {
-    if (taskId) {
-      const foundTask = tasks.find((t) => t.id === taskId);
-      if (foundTask) {
-        setTask(foundTask);
+  // 加载任务数据的函数
+  const loadTask = async (preserveEvidence = false) => {
+    if (!taskId) {
+      setLoadingTask(false);
+      return;
+    }
+
+    console.log('[TaskDetail] 开始加载任务:', taskId, '保留证据:', preserveEvidence);
+    setLoadingTask(true);
+
+    // 对于监督任务，优先从数据库加载最新状态
+    try {
+      const remoteTask = await tasksApi.getTask(taskId);
+      if (remoteTask) {
+        console.log('[TaskDetail] 从数据库加载任务成功:', remoteTask.supervision_status);
+        setTask(remoteTask);
+
+        // 只在不保留证据时才更新（避免覆盖用户正在输入的内容）
+        if (!preserveEvidence) {
+          setEvidenceText(remoteTask.evidence_text || '');
+          setEvidenceImage(remoteTask.evidence_image || '');
+        }
+
+        setLoadingTask(false);
+        return;
+      }
+    } catch (error) {
+      console.error('[TaskDetail] 从数据库加载任务失败:', error);
+    }
+
+    // 数据库加载失败，尝试从本地查找
+    const foundTask = tasks.find((t) => t.id === taskId);
+    if (foundTask) {
+      console.log('[TaskDetail] 从本地加载任务:', foundTask.supervision_status);
+      setTask(foundTask);
+
+      // 只在不保留证据时才更新
+      if (!preserveEvidence) {
         setEvidenceText(foundTask.evidence_text || '');
         setEvidenceImage(foundTask.evidence_image || '');
       }
     }
-  }, [taskId, tasks]);
+
+    setLoadingTask(false);
+  };
+
+  // 初始加载
+  useEffect(() => {
+    loadTask(false); // 初始加载时不保留证据
+  }, [taskId]);
+
+  // 页面显示时刷新数据（关键！）
+  useDidShow(() => {
+    console.log('[TaskDetail] 页面显示，刷新任务数据');
+    // 页面重新显示时保留用户已输入的证据（避免从相册返回时丢失）
+    loadTask(true);
+  });
 
   // 判断当前用户角色
   const isCreator = task && user && task.user_id === user.id;
   const isSupervisor = task && user && task.supervisor_id === user.id;
+
+  console.log('[TaskDetail] 用户角色判断:', {
+    hasTask: !!task,
+    hasUser: !!user,
+    taskUserId: task?.user_id,
+    currentUserId: user?.id,
+    supervisorId: task?.supervisor_id,
+    isCreator,
+    isSupervisor,
+    supervisionStatus: task?.supervision_status,
+  });
+
+  console.log('[TaskDetail] UI 渲染条件:', {
+    '等待邀请-创建者': isCreator && task?.supervision_status === 'waiting_invite',
+    '等待邀请-访客': !isCreator && !isSupervisor && task?.supervision_status === 'waiting_invite',
+    '已邀请-创建者': isCreator && task?.supervision_status === 'invited',
+    '证据已提交-创建者': isCreator && task?.supervision_status === 'evidence_submitted',
+    '证据已提交-监督者': isSupervisor && task?.supervision_status === 'evidence_submitted',
+  });
+
+  // 分享配置
+  useShareAppMessage(() => {
+    if (!task || !user) {
+      return {
+        title: '来ToxicTask一起自律打卡吧！',
+        path: '/pages/index/index',
+      };
+    }
+
+    // 🔥 新版挑衅文案
+    const provocationTexts = [
+      `敢不敢来打个赌？我要是完不成「${task.title}」，尊严币双手奉上！`,
+      `听说你很严？来做我的无情监工吧！完不成「${task.title}」任你处置。`,
+      `狠话已经放下了！今天必须拿下「${task.title}」，不信你点开看！`,
+      `本鸽王又要立 Flag 了：「${task.title}」。如果我又咕了，请狠狠嘲笑我！`,
+      `你的好友正在派发"尊严基金"！快来监督我「${task.title}」，失败了尊严币全归你！`,
+      `救救孩子吧！我的拖延症晚期，只能靠你无情监督「${task.title}」来治了！`,
+      `为了证明我不是三分钟热度，我押上了全部尊严发誓要「${task.title}」`,
+    ];
+
+    const randomText = provocationTexts[Math.floor(Math.random() * provocationTexts.length)];
+
+    return {
+      title: randomText,
+      path: `/pages/tasks/detail?taskId=${task.id}&inviterId=${user.id}&action=supervise`,
+      imageUrl: '', // 使用默认截屏
+    };
+  });
 
   // 接受监督
   const handleAcceptSupervision = async () => {
@@ -41,35 +138,99 @@ export default function TaskDetail() {
       await acceptSupervision(task.id, user.id);
 
       Taro.showToast({
-        title: '接受监督成功',
+        title: '已接受监督',
         icon: 'success',
       });
 
-      // 刷新任务
-      const updatedTask = tasks.find((t) => t.id === task.id);
-      if (updatedTask) {
-        setTask(updatedTask);
-      }
+      // 延迟返回
+      setTimeout(() => {
+        Taro.switchTab({ url: '/pages/index/index' });
+      }, 1500);
     } catch (error) {
       console.error('[TaskDetail] 接受监督失败:', error);
       Taro.showToast({
         title: (error as Error).message || '操作失败',
         icon: 'none',
       });
-    } finally {
       setLoading(false);
     }
   };
 
+  // 取消监督
+  const handleCancelSupervision = async () => {
+    if (!task || !user) return;
+
+    Taro.showModal({
+      title: '确认取消监督',
+      content: `取消后将退还押金 ${task.bet_amount} 币和赏金 ${task.bounty_coins} 币，任务将被删除`,
+      success: async (res) => {
+        if (res.confirm) {
+          try {
+            setLoading(true);
+            await cancelSupervision(task.id);
+
+            Taro.showToast({
+              title: '已取消监督并退币',
+              icon: 'success',
+            });
+
+            // 返回首页
+            setTimeout(() => {
+              Taro.switchTab({ url: '/pages/index/index' });
+            }, 1500);
+          } catch (error) {
+            console.error('[TaskDetail] 取消监督失败:', error);
+            Taro.showToast({
+              title: (error as Error).message || '操作失败',
+              icon: 'none',
+            });
+          } finally {
+            setLoading(false);
+          }
+        }
+      },
+    });
+  };
+
   // 选择图片
   const handleChooseImage = () => {
+    console.log('[TaskDetail] 点击选择图片');
     Taro.chooseImage({
       count: 1,
       sizeType: ['compressed'],
       sourceType: ['album', 'camera'],
-      success: (res) => {
+      success: async (res) => {
         const tempFilePath = res.tempFilePaths[0];
-        setEvidenceImage(tempFilePath);
+        console.log('[TaskDetail] 图片选择成功:', tempFilePath);
+
+        try {
+          // 将临时文件转为 base64（持久化存储）
+          const fs = Taro.getFileSystemManager();
+          const base64 = await new Promise<string>((resolve, reject) => {
+            fs.readFile({
+              filePath: tempFilePath,
+              encoding: 'base64',
+              success: (res) => {
+                resolve(`data:image/jpeg;base64,${res.data}`);
+              },
+              fail: reject,
+            });
+          });
+
+          console.log('[TaskDetail] 图片转换为 base64 成功，长度:', base64.length);
+          setEvidenceImage(base64);
+        } catch (error) {
+          console.error('[TaskDetail] 图片转换失败:', error);
+          // 降级：直接使用临时路径
+          setEvidenceImage(tempFilePath);
+        }
+      },
+      fail: (err) => {
+        console.error('[TaskDetail] 图片选择失败:', err);
+        Taro.showToast({
+          title: '选择图片失败',
+          icon: 'none',
+        });
       },
     });
   };
@@ -95,18 +256,16 @@ export default function TaskDetail() {
         icon: 'success',
       });
 
-      // 刷新任务
-      const updatedTask = tasks.find((t) => t.id === task.id);
-      if (updatedTask) {
-        setTask(updatedTask);
-      }
+      // 延迟返回首页
+      setTimeout(() => {
+        Taro.switchTab({ url: '/pages/index/index' });
+      }, 1500);
     } catch (error) {
       console.error('[TaskDetail] 提交证据失败:', error);
       Taro.showToast({
         title: (error as Error).message || '操作失败',
         icon: 'none',
       });
-    } finally {
       setLoading(false);
     }
   };
@@ -175,10 +334,42 @@ export default function TaskDetail() {
     }
   };
 
+  if (loadingTask) {
+    return (
+      <View className='detail-container'>
+        <Text className='loading-text'>加载中...</Text>
+      </View>
+    );
+  }
+
   if (!task) {
     return (
       <View className='detail-container'>
         <Text className='error-text'>任务不存在</Text>
+      </View>
+    );
+  }
+
+  if (!user) {
+    return (
+      <View className='detail-container'>
+        <Text className='error-text'>请先登录</Text>
+        <Button
+          className='primary-button'
+          onClick={() => {
+            // 保存当前页面完整路径（包含所有参数），登录后返回
+            const params = new URLSearchParams();
+            Object.keys(router.params).forEach(key => {
+              params.append(key, router.params[key]);
+            });
+            const currentUrl = `/pages/tasks/detail?${params.toString()}`;
+            Taro.redirectTo({
+              url: `/pages/auth/index?redirect=${encodeURIComponent(currentUrl)}`
+            });
+          }}
+        >
+          去登录
+        </Button>
       </View>
     );
   }
@@ -207,8 +398,15 @@ export default function TaskDetail() {
         <View className='action-card'>
           <Text className='card-title'>等待好友接受监督</Text>
           <Text className='card-desc'>请分享任务给好友，邀请TA来监督你</Text>
-          <Button className='primary-button' onClick={handleShareTask}>
+          <Button className='primary-button' openType='share'>
             分享给好友
+          </Button>
+          <Button
+            className='cancel-button'
+            onClick={handleCancelSupervision}
+            disabled={loading}
+          >
+            取消邀请并退币
           </Button>
         </View>
       )}
@@ -284,7 +482,15 @@ export default function TaskDetail() {
           {task.evidence_image && (
             <View className='evidence-preview'>
               <Text className='preview-label'>证据图片：</Text>
-              <Image src={task.evidence_image} className='preview-image' mode='aspectFit' />
+              <Image
+                src={
+                  task.evidence_image.startsWith('data:image')
+                    ? task.evidence_image
+                    : `data:image/jpeg;base64,${task.evidence_image}`
+                }
+                className='preview-image'
+                mode='aspectFit'
+              />
             </View>
           )}
 
@@ -306,7 +512,15 @@ export default function TaskDetail() {
           {task.evidence_image && (
             <View className='evidence-preview'>
               <Text className='preview-label'>证据图片：</Text>
-              <Image src={task.evidence_image} className='preview-image' mode='aspectFit' />
+              <Image
+                src={
+                  task.evidence_image.startsWith('data:image')
+                    ? task.evidence_image
+                    : `data:image/jpeg;base64,${task.evidence_image}`
+                }
+                className='preview-image'
+                mode='aspectFit'
+              />
             </View>
           )}
 
